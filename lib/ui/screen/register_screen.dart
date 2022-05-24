@@ -14,7 +14,6 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       final tam = MediaQuery.of(context).size.height * 0.17;
-
     return  Scaffold(
       appBar: 
       AppBar(
@@ -172,12 +171,14 @@ class _Login_Form extends StatelessWidget {
                   name: loginForm.name,
                   password : loginForm.password,
                );
-
                 final String? errorMesaage= await carnetService.createProduct(dato);
                  await storage.write(key:'email',value: loginForm.email);
+                 await storage.write(key:'name',value: loginForm.name);
+                 await storage.write(key:'document',value: loginForm.documento);
+                 await Future.delayed( const Duration(seconds: 2));
 
                 if(errorMessage == null){
-                Navigator.pushReplacementNamed(context, 'home');
+                Navigator.pushReplacementNamed(context, 'check');
                 }else{
                   NotificationsService.showSnackbar(errorMessage);
                   loginForm.isLoading= false;

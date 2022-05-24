@@ -29,60 +29,41 @@ class CarnetService extends ChangeNotifier{
     this.loadCartUser();
 
   }
-
  Future<String>readData()async{
   return  await storage.read(key:'data') ?? '';
   }
- 
   // TODO: 
    Future <Usuario> loadCartUser() async {
-    //isLoading = true;
-    //notifyListeners();
-    // Carnet dato = Carnet();
-    // final url = Uri.https( _baseUrl, 'gob/empleado.json');
-    // final resp = await http.get(url);
-    // final  productsMap= json.decode(resp.body);
-    // Carnet dato = Carnet();
-    // dato=Carnet.fromJson(productsMap);
-    // final tempScan = new Carnet(birthday: 'd', carg: 'duu', documentId: 1, email: 'luis.gmail.com', fechaingreso: '5/6/2001', firstname: 'Luis', plant: 'Secretario', secondsname: 'Pedro', sex: 'M');
-
-
     Usuario dato1 = Usuario();
-
    final firstname= await storage.read(key:'email') ?? '';
    final name= await storage.read(key:'name') ?? '';
    final document= await storage.read(key:'document') ?? '';
    final email1= await storage.read(key:'email1') ?? '';
    final password= await storage.read(key:'password') ?? '';
-    
+
     if( name != '' ){
-
       print('Entro por primera vez');
-
       final  Usuario dato = Usuario(
                   document: document,
                   email: email1 ,
                   name: name,
                   password : password,
                );
-
         return dato;
 
     }else{
-
-        final url = Uri.https( _baseUrl, 'Usuario.json');
-
-    final resp = await http.get(url);
+      try {
+       final url11 = Uri.https( _baseUrl, 'Usuario.json');
+       final resp2 = await http.put(url11);
+       final resp3 = await http.put(url11);
+       await Future.delayed( const Duration(seconds: 7));
+    final url = Uri.https( _baseUrl, 'Usuario.json');
+    final resp = await http.get(url);    
     final Map<String, dynamic> productsMap= json.decode(resp.body);
-    
-    // print('---------------nada-----------------');
-    // print(productsMap);
-    // print('--------------dad--------------------');
     productsMap.forEach(( key , value){
       final tempProduct = Usuario.fromMap(value);
       this.usuarios.add(tempProduct);
     });
-
     print('-------------------correo--------------------');
       print(firstname);
     print('-------------------correo--------------------');
@@ -101,34 +82,12 @@ class CarnetService extends ChangeNotifier{
         await storage.write(key: 'password', value: usuarios[i].password);
         return  usuarios[i];
       }
+    }        
+      } catch (e) {
+       NotificationsService.showSnackbar('Error 404');
+      }
 
     }
-
-    }
-    // final url = Uri.https( _baseUrl, 'Usuario.json', {
-    //   'auth': await storage.read(key: 'token') ?? '',
-    // });
-    // final resp = await http.get(url);
-    // final Map<String, dynamic> productsMap= json.decode(resp.body);
-    // productsMap.forEach(( key , value){
-    //   final tempProduct = Usuario.fromMap(value);
-    //   this.usuarios.add(tempProduct);
-    // });
-    // print(firstname);
-    // for (var i = 0; i < usuarios.length-1 ; i++) { 
-    //   String dato= usuarios[i].email!;
-    //   //print(dato);
-    //   if(dato == firstname){
-    //     print('Entro ddddddd');
-    //     //print('$usuarios[i]');
-    //     print(usuarios[i]);
-    //     await storage.write(key: 'document', value: usuarios[i].document);
-    //     await storage.write(key: 'email', value: usuarios[i].email);
-    //     await storage.write(key: 'name', value: usuarios[i].name);
-    //     await storage.write(key: 'password', value: usuarios[i].password);
-    //     return  usuarios[i];
-    //   }
-    // }
     return dato1;
   }
 

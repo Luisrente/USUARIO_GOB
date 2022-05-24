@@ -1,4 +1,4 @@
-package com.example.gob_cordoba
+package com.example.gob_cordoba_user
 
 import io.flutter.embedding.android.FlutterActivity
 

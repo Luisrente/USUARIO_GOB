@@ -66,6 +66,7 @@ class AuthService extends ChangeNotifier{
     await storage.delete(key:'token');
     await storage.delete(key:'email');
     await storage.delete(key:'name');
+    await storage.delete(key:'document');
     return;
   }
 
@@ -73,8 +74,8 @@ class AuthService extends ChangeNotifier{
   return  await storage.read(key:'token') ?? '';
   }
 
-
   Future<String>readData()async{
   return  await storage.read(key:'email') ?? '';
   }
+
 }

@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ControlGob',
       debugShowCheckedModeBanner: false,
-      initialRoute: 'check',
+      initialRoute: 'home',
       routes: {
         'home'  : (_) =>  const HomeScreen(),
         'login'  : (_) =>  const LoginScreen(),

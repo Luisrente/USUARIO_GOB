@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
                 child:  Column(
                   children: [
                      const SizedBox( height: 10),
-                     Text('Control de acceso',style: Theme.of(context).textTheme.headline4),
+                     Text('Login',style: Theme.of(context).textTheme.headline4),
                      const SizedBox( height: 30),
                      ChangeNotifierProvider(
                        create: (_) => LoginFormProvider( ),
@@ -123,13 +123,11 @@ class _Login_Form extends StatelessWidget {
               ),
               onPressed:  loginForm.isLoading ? null : () async {
                 FocusScope.of(context).unfocus();
-             final authService= Provider.of<AuthService>(context, listen:false);
-                   
+                final authService= Provider.of<AuthService>(context, listen:false);
                 if(!loginForm.isValidForm()) return ;
                 loginForm.isLoading= true;
                 await Future.delayed( const Duration(seconds: 2));
                 //Validar si el login es correcto
-
                final String? errorMessage= await authService.login(loginForm.email,loginForm.password);
                 if(errorMessage == null){
                 Navigator.pushReplacementNamed(context, 'home');

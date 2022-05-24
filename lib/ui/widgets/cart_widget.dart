@@ -14,93 +14,101 @@ class CardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final carnetservice= Provider.of<CarnetService>(context);
+    final carnetservice= Provider.of<CarnetService>(context,listen: false);
     final EncryptionService encryptionService= new EncryptionService();
     String documentId = dato.document!;
     print(documentId);
-    double height = MediaQuery.of(context).size.height* 0.70;
-    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height* 0.75;
+    double padding = MediaQuery.of(context).size.width* 0.07;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20 , vertical: 30),
+      padding:  EdgeInsets.symmetric(horizontal: padding , vertical: 30),
       child: Container(
-        margin: EdgeInsets.only(top: 30, bottom: 50),
+        margin: EdgeInsets.only(top: 30),
+        height: height,
         width: double.infinity,
-        decoration: _cardBordes(),
-        child: Column(
-          // alignment: Alignment.bottomCenter,
-          children: [
-            _Encabezado( usuario: dato),
-            Expanded(child: Column(
-              children: [
-                _CodigoQR(documento: documentId),
-                Container(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 25, right: 25, bottom: 10),
-                        child: Row(
-                          children: const [
-                              Text(
-                                  'Secretaria: ',
-                                  style: TextStyle(fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
-                                  maxLines: 2,
-                                 overflow: TextOverflow.ellipsis,
-                                  ),
-                             Text(
-                             'Secretaria de educacion',
-                              style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 50, 49, 49)),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                       ),      
+        decoration: _cardBordes(),  
+      child: Stack (
+
+        children: [
+          Positioned(
+            left: 0,
+            child: Cargo()
+          ),
+           Positioned(
+            top: 5,
+            right: 1,
+            bottom: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25)
+              ),
+              width:   MediaQuery.of(context).size.width* 0.69,
+              height:  MediaQuery.of(context).size.height* 0.75,
+              child: Column(
+                children:[
+                  Padding(
+                    padding: const EdgeInsets.only(right:25,left:25,top: 30, bottom:20),
+                    child: Image.asset('assets/logo.png',   
+                    alignment: Alignment.center),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 45),
+                      child: Container(
+                        width: 180,
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment : CrossAxisAlignment.center,
+                          children: [
+                            _Foto(),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2, bottom: 10 ),
+                              child: Column(
+                                children: [
+                                  Text( 'Sara Rodriguez' , style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold)),
+                    
+                                  Text( 'Secretaria',style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+                                ],
+                              ),
+                            ),
+                            _CodigoQR(documento: 'rrrrr'),
+                            Text( 'CC: 1193565389',style: TextStyle( fontSize: 23, fontWeight: FontWeight.bold, color: Colors.black)),
                           ]
-                        ),
-                      ),
-                      
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 25, right: 25, bottom: 10),
-                        child: Row(
-                          children: const [
-                          Text(
-                                  'Contrado: ',
-                                  style: TextStyle(fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
-                                  maxLines: 2,
-                                 overflow: TextOverflow.ellipsis,
-                                  ),
-                          Text(
-                             'Prestacion de Servicios',
-                              style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 50, 49, 49)),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                       ),
-                          ]
-                        ),
-                      ),
-                      const   SizedBox(height: 20) ,
-                      const Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Center(
-                            child: Text(
-                                 'Este carnet es un documento intitucional el cual te agredita como trabajador de la gobernacion de cordoba su comercializacion es un delito',
-                                  style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 50, 49, 49)),
-                                  maxLines: 3,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                       ),
-                          ),
+
                         )
-                      
-                    ],
+                      ),
+                    ),
                   ),
 
-                
-                )
+                  const Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(child: const Text('www.cordoba.gov.co', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(115, 9, 46, 83)))),
+                  )
+                ],
+            
+              )
+            )
+          ),
+              Positioned(
+                right: 0,
+                bottom: 30,
+               child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical:10, horizontal:10),
+                      child: Container(
+                        color: Colors.blue,
+                        height: 5,
+                        width: MediaQuery.of(context).size.width* 0.65, 
+                      ),
+                    ),
+             ),
+        ]
 
-              ],
-            )),
-             Cargo()
-          ]
 
-        )
+      ),
+      
+      
+      
       ),
     );
   }
@@ -167,11 +175,44 @@ class _CodigoQR extends StatelessWidget {
   Widget build(BuildContext context) {
     final tamano = MediaQuery.of(context).size;
     final EncryptionService encryptionService= new EncryptionService();
+    return Padding(
+      padding: const EdgeInsets.only(left: 7),
+      child: Container(
+        height: tamano.height*0.2 ,
+        width: tamano.width*0.5,
+        child: QrImage(data: encryptionService.encryptData(documento))
+      ),
+    );
+  }
+}
+class _Foto extends StatelessWidget {
+  
+  const _Foto({
+    Key? key,
+  }) : super(key: key);
 
-    return Container(
-      height: tamano.height*0.25 ,
-      width: tamano.width*0.5,
-      child: QrImage(data: encryptionService.encryptData(documento))
+  @override
+  Widget build(BuildContext context) {
+    final tamano = MediaQuery.of(context).size;
+    String url= 'https://thumbs.dreamstime.com/z/retrato-de-hombre-mirando-la-c%C3%A1mara-sobre-el-fondo-blanco-158750254.jpg';
+    final  url1= null;
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Center(
+        child: Container(
+          height: tamano.height*0.2 ,
+          width: tamano.width*0.5,
+          child: url == null
+        ? Image(image: const AssetImage('assets/persona.jpeg'),
+          fit: BoxFit.cover
+        )
+        : FadeInImage(
+          placeholder: const AssetImage('assets/loading.gif'),
+          image: NetworkImage(url),
+          fit: BoxFit.cover
+        )
+        ),
+      ),
     );
   }
 }
@@ -185,14 +226,22 @@ class Cargo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // width: double.infinity,
-      height:60,
+      height: MediaQuery.of(context).size.height* 0.75,
+      width: MediaQuery.of(context).size.width* 0.16,
       decoration: _buildBoxDecoration(),
-      child: const Center(
-        child: Text(
-          'SECRETARIO',
-          style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 30),
+        child: Align(
+          alignment : Alignment.topCenter,
+          child: RotatedBox(
+            quarterTurns: 3,
+            child: Text(
+              'SEC. TRANSPORTE ',
+              style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
       )
     );
@@ -200,7 +249,7 @@ class Cargo extends StatelessWidget {
 
   BoxDecoration _buildBoxDecoration() => BoxDecoration(
     color: Colors.blue,
-    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25)  )
+    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25),  topLeft: Radius.circular(25)  )
 
 
   );
