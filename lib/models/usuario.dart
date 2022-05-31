@@ -40,17 +40,13 @@ class Usuario {
     //     "name": name,
     //     "password": password,
     // };
-
         String toJson() => json.encode(toMap());
-
-
         factory Usuario.fromMap(Map<String, dynamic> json) => Usuario(
         document: json["document"],
         email: json["email"],
         name: json["name"],
         password: json["password"],
     );
-
     Map<String, dynamic> toMap() => {
         "document": document,
         "email": email,

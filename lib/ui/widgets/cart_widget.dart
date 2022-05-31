@@ -5,19 +5,21 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../data/AES.dart';
-import '../../models/models.dart';
+import '../../models/user.dart';
 
 class CardWidget extends StatelessWidget {
 
   final Usuario dato;
-  const CardWidget({Key? key,  required this.dato}) : super(key: key);
+  const CardWidget({Key? key,  
+  required this.dato
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final carnetservice= Provider.of<CarnetService>(context,listen: false);
     final EncryptionService encryptionService= new EncryptionService();
-    String documentId = dato.document!;
-    print(documentId);
+    // String documentId = dato.document!;
+    // print(documentId);
     double height = MediaQuery.of(context).size.height* 0.75;
     double padding = MediaQuery.of(context).size.width* 0.07;
     return Padding(
@@ -28,11 +30,10 @@ class CardWidget extends StatelessWidget {
         width: double.infinity,
         decoration: _cardBordes(),  
       child: Stack (
-
         children: [
           Positioned(
             left: 0,
-            child: Cargo()
+            child: Cargo(dato: dato)
           ),
            Positioned(
             top: 5,
@@ -66,14 +67,14 @@ class CardWidget extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 2, bottom: 10 ),
                               child: Column(
                                 children: [
-                                  Text( 'Sara Rodriguez' , style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold)),
+                                  Text( '${dato.nombre1} ${dato.apellido1} ' , style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold)),
                     
-                                  Text( 'Secretaria',style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+                                  Text( '${dato.cargo}',style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
                                 ],
                               ),
                             ),
-                            _CodigoQR(documento: 'rrrrr'),
-                            Text( 'CC: 1193565389',style: TextStyle( fontSize: 23, fontWeight: FontWeight.bold, color: Colors.black)),
+                            _CodigoQR(documento:dato.documento),
+                            Text( 'CC:${dato.documento}',style: TextStyle( fontSize: 23, fontWeight: FontWeight.bold, color: Colors.black)),
                           ]
 
                         )
@@ -129,10 +130,11 @@ class CardWidget extends StatelessWidget {
 
 class _Encabezado extends StatelessWidget {
   
-  final Usuario usuario;
+  // final Usuario usuario;
   
   const _Encabezado({
-    Key? key,  required this.usuario,
+    Key? key,  
+    // required this.usuario,
   }) : super(key: key);
 
   @override
@@ -145,14 +147,14 @@ class _Encabezado extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-             usuario.name! ,
+             'usuario.name!' ,
               style: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
            const SizedBox(height: 5 ),
               Text(
-                  'CC: '+ usuario.document! ,
+                  'CC: '+ 'usuario.document!' ,
                style: TextStyle(fontSize: 18, color: Colors.black),
                maxLines: 1,
                overflow: TextOverflow.ellipsis,
@@ -190,7 +192,6 @@ class _Foto extends StatelessWidget {
   const _Foto({
     Key? key,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final tamano = MediaQuery.of(context).size;
@@ -218,8 +219,11 @@ class _Foto extends StatelessWidget {
 }
 
 class Cargo extends StatelessWidget {
+
+  final Usuario dato;
+
   const Cargo({
-    Key? key,
+    Key? key, required  this.dato,
   }) : super(key: key);
 
   @override
@@ -236,7 +240,7 @@ class Cargo extends StatelessWidget {
           child: RotatedBox(
             quarterTurns: 3,
             child: Text(
-              'SEC. TRANSPORTE ',
+              '${dato.dependencia}',
               style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

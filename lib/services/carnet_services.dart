@@ -2,23 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/models/model/loginResponse.dart';
+// import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/models/user.dart';
 import 'package:gob_cordoba/provider/db_provider.dart';
 import 'package:gob_cordoba/provider/scan_list_provider.dart';
 import 'package:gob_cordoba/services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 class CarnetService extends ChangeNotifier{
 
   final String _baseUrl = 'flutter-73f8f-default-rtdb.firebaseio.com';
-  late Carnet? carnets ;
   final storage = new FlutterSecureStorage();
-  List<ScanModel> scans = [];
   List<Usuario> usuarios = [];
-   
+  late Usuario usuario;
+
    ScanListProvider base= new ScanListProvider();
 
   File? newPictureFile;
@@ -33,91 +35,99 @@ class CarnetService extends ChangeNotifier{
   return  await storage.read(key:'data') ?? '';
   }
   // TODO: 
+
+
    Future <Usuario> loadCartUser() async {
     Usuario dato1 = Usuario();
-   final firstname= await storage.read(key:'email') ?? '';
-   final name= await storage.read(key:'name') ?? '';
-   final document= await storage.read(key:'document') ?? '';
-   final email1= await storage.read(key:'email1') ?? '';
-   final password= await storage.read(key:'password') ?? '';
 
-    if( name != '' ){
-      print('Entro por primera vez');
-      final  Usuario dato = Usuario(
-                  document: document,
-                  email: email1 ,
-                  name: name,
-                  password : password,
-               );
-        return dato;
-
-    }else{
-      try {
-       final url11 = Uri.https( _baseUrl, 'Usuario.json');
-       final resp2 = await http.put(url11);
-       final resp3 = await http.put(url11);
-       await Future.delayed( const Duration(seconds: 7));
-    final url = Uri.https( _baseUrl, 'Usuario.json');
-    final resp = await http.get(url);    
-    final Map<String, dynamic> productsMap= json.decode(resp.body);
-    productsMap.forEach(( key , value){
-      final tempProduct = Usuario.fromMap(value);
-      this.usuarios.add(tempProduct);
-    });
-    print('-------------------correo--------------------');
-      print(firstname);
-    print('-------------------correo--------------------');
-
-    for (var i = 0; i < usuarios.length-1 ; i++) { 
-      String dato= usuarios[i].email!;
-      print(dato);
-      //print(dato);
-      if(dato == firstname){
-        print('Entro ddddddd');
-        //print('$usuarios[i]');
-        print(usuarios[i]);
-        await storage.write(key: 'document', value: usuarios[i].document);
-        await storage.write(key: 'email1', value: usuarios[i].email);
-        await storage.write(key: 'name', value: usuarios[i].name);
-        await storage.write(key: 'password', value: usuarios[i].password);
-        return  usuarios[i];
-      }
-    }        
-      } catch (e) {
-       NotificationsService.showSnackbar('Error 404');
-      }
-
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   String? kitJson = prefs.getString("content");
+    final String? userStr = prefs.getString('content');
+    print('--------------------------');
+    print(userStr);
+    print('--------------------------');
+    if (userStr != null) {
+      print('entro');
+      Map<String, dynamic> userMap = jsonDecode(userStr);
+      return Usuario.fromJson(userMap);
     }
-    return dato1;
+      return dato1;
   }
 
-  Future <ScanModel> loadCarstAdmin( int documentId) async {
+  Future <Usuario> loadCarstAdmin( String id) async {
     isLoading = true;
     notifyListeners();
-    
-    final url = Uri.https( _baseUrl, 'Usuario.json');
-    final resp = await http.get(url);
-    final  productsMap= json.decode(resp.body);
-    isLoading= false;
-    notifyListeners();
-    ScanModel scans1= ScanModel();
+    Usuario dato1 = Usuario();
+
     try {
-       await Future.delayed(const Duration(seconds: 4));
-    } catch (e) {
-    }
-    if(isLoading==true)
-    {
-    }else{
-     final ScanModel scans= await DBProvider.db.getScanById(1);
-     if(scans.tipo==null){
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios/${id}');
+    final resp = await http.get(uri, 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+    print('paso');
+    if ( resp.statusCode == 200 ) {
+      final loginResponse = loginResponseFromJson( resp.body );
+      usuario = loginResponse.usuario;
+      return usuario;
+    } else {
+      final Usuario scans= await DBProvider.db.getScanById(id);
+     if(scans.apellido1==null){
        print('null');
      }else{
        return scans;
-     }  
+     } 
     }
-    return scans1;
-    // return null;    
+    } catch (e) {
+      NotificationsService.showSnackbar("Comunicarse con el admin ");
+    }
+    return dato1;
+    
   }
+
+  datosbase( ) async {  
+    isLoading = true;
+    notifyListeners();
+    Usuario dato2 = Usuario();
+
+
+    try {
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios');
+    final resp = await http.get(uri, 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+    print('paso');
+    if ( resp.statusCode == 200 ) {
+      final loginResponse = loginResponseFromJson( resp.body );
+      final  usuarioi = loginResponse.usuario;
+      print(usuarioi);
+
+      for (var i = 0; i < usuarios.length-1 ; i++) { 
+      final s =  await DBProvider.db.nuevoScan(usuarios[i]);
+    }
+    } else {
+    //   final ScanModel scans= await DBProvider.db.getScanById(1);
+    //  if(scans.tipo==null){
+    //    print('null');
+    //  }else{
+    //    return scans;
+    //  } 
+    }
+    } catch (e) {
+      NotificationsService.showSnackbar("Comunicarse con el admin ");
+    }
+
+    // for (var i = 0; i < usuarios.length-1 ; i++) { 
+    //   final s =  await DBProvider.db.nuevoScan(usuarios[i]);
+    // }
+    // print('con exito');
+    // isLoading= false;
+    // notifyListeners();
+  }
+
   
   // Future saveOrCreateProduct( Product product) async {
   //   isSaving = true;
@@ -141,18 +151,17 @@ class CarnetService extends ChangeNotifier{
   //    return product.id!;
   // }
 
-   Future<String> createProduct( Usuario product ) async{
-    final url = Uri.https( _baseUrl, 'Usuario.json');
-    final resp = await http.post(url, body: product.toJson());
-    final decodedData= json.decode(resp.body);
-    //product.id= decodedData['name'];
-    // this.products.add(product);
-    print('jjjyjy');
-    print(decodedData);
-    print('jjtjtjjtjtj');
-    return product.email!;
-
-  }
+  //  Future<String> createProduct( Usuario product ) async{
+  //   final url = Uri.https( _baseUrl, 'Usuario.json');
+  //   final resp = await http.post(url, body: product.toJson());
+  //   final decodedData= json.decode(resp.body);
+  //   //product.id= decodedData['name'];
+  //   // this.products.add(product);
+  //   print('jjjyjy');
+  //   print(decodedData);
+  //   print('jjtjtjjtjtj');
+  //   return product.email!;
+  // }
 
   // void updateSelectedProductImage( String path){
     

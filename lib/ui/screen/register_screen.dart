@@ -34,7 +34,7 @@ class RegisterScreen extends StatelessWidget {
               child:  Column(
                 children: [
                    const SizedBox( height: 10),
-                   Text('Registro',style: Theme.of(context).textTheme.headline4),
+                   Text('Password',style: Theme.of(context).textTheme.headline4),
                    const SizedBox( height: 30),
                    ChangeNotifierProvider(
                      create: (_) => LoginFormProvider( ),
@@ -79,23 +79,6 @@ class _Login_Form extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children:[
-            TextFormField(
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecorations.authInputDecoration(
-                hinText: 'jon.do@gmail.com',
-                labelText: 'Correo electronico',
-                prefixIcon: Icons.alternate_email_rounded
-              ),
-              onChanged: (value) => loginForm.email= value,
-              validator: (value){
-              String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-              RegExp regExp  = new RegExp(pattern);
-              return regExp.hasMatch(value ?? '')
-                ? null
-                : 'El valor ingredao no luce como un correo';
-              },
-            ),
             const SizedBox(height: 30),
             TextFormField(
               autocorrect: false,
@@ -113,31 +96,24 @@ class _Login_Form extends StatelessWidget {
                   : 'La constraseña debede ser de 6 caracteres';
               },
             ),
-              const SizedBox(height: 30),
-              TextFormField(
+            const SizedBox(height: 30),
+            TextFormField(
               autocorrect: false,
-              // obscureText: true,
-              keyboardType: TextInputType.name,
+              obscureText: true,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecorations.authInputDecoration(
-                hinText: 'Jose',
-                labelText: 'Nombre',
-                prefixIcon: Icons.contact_page_outlined
+                hinText: '*****',
+                labelText: 'Contraseña',
+                prefixIcon: Icons.lock_outline
               ),
               onChanged: (value) => loginForm.name= value,
+              validator: (value) {
+                return( value != null && value.length >= 6 && loginForm.password==value)
+                  ? null
+                  : 'La constraseña debede ser iguales';
+              },
             ),
-
             const SizedBox(height: 30),
-
-              TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecorations.authInputDecoration(
-                      hinText: '12134', 
-                      labelText: 'Numero de identificacion',
-                       prefixIcon: Icons.numbers
-                  ),
-              onChanged: (value) => loginForm.documento= value,   
-             ),
-
             const SizedBox(height: 30),
             MaterialButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -161,26 +137,11 @@ class _Login_Form extends StatelessWidget {
                 if(!loginForm.isValidForm()) return ;
                 loginForm.isLoading= true;
                 await Future.delayed( const Duration(seconds: 2));
-                //Validar si el login es correcto
-
-               final String? errorMessage= await authService.createUser(loginForm.email,loginForm.password);
-
-               final  Usuario dato = Usuario(
-                  document: loginForm.documento,
-                  email: loginForm.email ,
-                  name: loginForm.name,
-                  password : loginForm.password,
-               );
-                final String? errorMesaage= await carnetService.createProduct(dato);
-                 await storage.write(key:'email',value: loginForm.email);
-                 await storage.write(key:'name',value: loginForm.name);
-                 await storage.write(key:'document',value: loginForm.documento);
-                 await Future.delayed( const Duration(seconds: 2));
-
-                if(errorMessage == null){
+                String id= await  authService.readId();
+               final String errorMessag= await authService.password(loginForm.password,id);
+                if(errorMessag == '1'){
                 Navigator.pushReplacementNamed(context, 'check');
                 }else{
-                  NotificationsService.showSnackbar(errorMessage);
                   loginForm.isLoading= false;
                 }
             }

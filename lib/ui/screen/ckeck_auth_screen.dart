@@ -18,8 +18,25 @@ class CheckAuthScreen extends StatelessWidget {
            builder: (BuildContext context, AsyncSnapshot<String> snapshot){
              if(!snapshot.hasData)
               return const Text('Espere');
-
-             if ( snapshot.data == ''){
+             if ( snapshot.data == 'ADMIN_ROLE'){
+              Future.microtask((){
+                Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: ( _ , __ , ___) => const ControlScreen(),
+                  transitionDuration: const Duration( seconds: 0)
+                ));
+                //Navigator.of(context).pushReplacementNamed('home');
+              });
+             }
+              if ( snapshot.data == 'USER_ROLE'){
+              Future.microtask((){
+                Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: ( _ , __ , ___) => const HomeScreen(),
+                  transitionDuration: const Duration( seconds: 0)
+                ));
+                //Navigator.of(context).pushReplacementNamed('home');
+              });
+             }
+              if ( snapshot.data == ''){
               Future.microtask((){
                 Navigator.pushReplacement(context, PageRouteBuilder(
                   pageBuilder: ( _ , __ , ___) => const LoginScreen(),
@@ -27,16 +44,8 @@ class CheckAuthScreen extends StatelessWidget {
                 ));
                 //Navigator.of(context).pushReplacementNamed('home');
               });
-             }else{
-                Future.microtask((){
-                  Navigator.pushReplacement(context, PageRouteBuilder(
-                    pageBuilder: (_,__,___) => const HomeScreen(),
-                    transitionDuration: const Duration( seconds: 0)
-                  )
-                );
-                //Navigator.of(context).pushReplacementNamed('home');
-              });
              }
+             
               return Container();
            },
            ),

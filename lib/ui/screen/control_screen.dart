@@ -3,7 +3,9 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:gob_cordoba/data/encryption_service.dart';
 import 'package:gob_cordoba/models/carnet_model.dart';
 import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/models/user.dart';
 import 'package:gob_cordoba/provider/db_provider.dart';
+import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/check_internet.dart';
 import 'package:gob_cordoba/services/services.dart';
 import 'package:provider/provider.dart';
@@ -42,15 +44,15 @@ class ControlScreen extends StatelessWidget {
                   });
   }
   
-  void displayDialog (BuildContext context , ScanModel model){
+  void displayDialog (BuildContext context , Usuario model){
     showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return AlertDialog(
                         elevation: 5,
-                        title:  Center(
-                          child: Text( '$model.tipo',
+                         title:  Center(
+                          child:  Text( '${model.nombre1} ${model.apellido1}',
                               style: TextStyle(color: Colors.black)),
                         ),
                         shape: RoundedRectangleBorder(
@@ -58,31 +60,32 @@ class ControlScreen extends StatelessWidget {
                         content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children:[
+                              _Foto(),
                               Row(
-                                children: const [
-                                  Text('Documento  : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text('1193565289')
+                                children:  [
+                                 const  Text('Documento  : ', style: TextStyle(fontWeight: FontWeight.bold) ),
+                                  Text(model.documento!)
                                 ]
                               ),
 
                                SizedBox(height: 10),
 
                               Row(
-                                children: const [
-                                  Text('Dependencia : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text('Sec Educacion')
+                                children: [
+                                  const Text('Dependencia : ', style: TextStyle(fontWeight: FontWeight.bold) ),
+                                  Text('${model.dependencia} ')
                                 ]
                               ),
                               SizedBox(height: 10),
                               Row(
-                                children: const [
-                                  Text('Cargo : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text('Contador publico',  maxLines: 2)
+                                children:  [
+                                 const  Text('Cargo : ', style: TextStyle(fontWeight: FontWeight.bold) ),
+                                  Text('${model.nombre1}',  maxLines: 1)
                                 ]
                               )
                             ]
-                            
                             ),
+                        
                         actions: [
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -125,11 +128,30 @@ class ControlScreen extends StatelessWidget {
 
    final CheckInternetConnection conexion = new CheckInternetConnection();
    final con = conexion.internetStatus();
+   final loginForm= Provider.of<InputsDocumentForms>(context);
    print(con);
    final carnetservice= Provider.of<CarnetService>(context);
    final authService= Provider.of<AuthService>(context , listen: false);
-
     final double tam = MediaQuery.of(context).size.height * 0.17;
+
+    Usuario dato = Usuario(
+        id: "629410aaf538dbfd9229e9b6",
+        nombre1: "Qluis F",
+        nombre2: "",
+        apellido1: "Renteria",
+        apellido2: "Martineez",
+        cargo: "Secretario",
+        documento: "234512337",
+        dependencia: "Sec.Ambiente",
+        correo: "Luis4@gmail.com",
+        img: "",
+        rol: "USER_ROLE",
+        estado: "false",
+        verfi: "true"
+    );
+   print( DBProvider.db.getScanById('629410aaf538dbfd9229e9b6'));
+   DBProvider.db.getTodosLosScans();
+   DBProvider.db.nuevoScan(dato);
     return  Scaffold(
       appBar: AppBar(
          actions:[
@@ -160,6 +182,7 @@ class ControlScreen extends StatelessWidget {
         child: Column(
           children: [
             Form(
+              key: loginForm.formKey1,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 children: [            
@@ -171,6 +194,7 @@ class ControlScreen extends StatelessWidget {
                       hinText: '12134', 
                       labelText: 'Numero de identificacion' 
                       ),
+                    onChanged: (value) => loginForm.documento= value,
                    ),
                   const SizedBox(height: 30),             
                 ]
@@ -184,10 +208,24 @@ class ControlScreen extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                 shape: const StadiumBorder(),
                                 primary: Colors.orange),
-                                onPressed: () {
-                                // widget.check!.terms = true;
-                                // displayDialog(context);
-                                 },
+                                onPressed:  loginForm.isLoading ? null : () async {
+                //FocusScope.of(context).unfocus();
+                print('entryyyyyyyyo');
+             final authService= Provider.of<AuthService>(context, listen:false);    
+                if(!loginForm.isValidForm()) return ;
+
+                print('paso por aaqui ');
+                loginForm.isLoading= true;
+                //Validar si el login es correc
+                final Usuario scans= await carnetservice.loadCarstAdmin(loginForm.documento);
+                 if(scans.documento==null){
+                   loginForm.isLoading= false;
+                    displayDialono(context);
+                    }else{
+                    loginForm.isLoading= false;
+                    displayDialog(context,scans);
+                    }
+                 },           
                     label: const Text('Consultar ', style: TextStyle(fontSize: 20))
                    ),
                  ),
@@ -200,36 +238,28 @@ class ControlScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child:  const Icon(Icons.qr_code_2_outlined),
         onPressed: () async {
-        String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-            '#3D8BEF', 'Cancelar', false, ScanMode.QR);
+          String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+            '#3D8BEF', 'Cancelar', false, ScanMode.QR);       
         try {
-          int numero= int.parse(barcodeScanRes);
-           if(numero == -1){
+           if(barcodeScanRes == '-1'){
              //no hace nada y sale
            }else{
-           String dato= encryptionService.descrypData(barcodeScanRes);
             //En caso tal que la respuesta sea nula
-             if(dato==null){
-           NotificationsService.showSnackbar('Codigo QR Invalido');
+             if(await encryptionService.descrypData(barcodeScanRes)==null){
+           NotificationsService.showSnackbar('Codigo QR Invalido encryption');
              }else{
-              int documentId= int.parse(dato);
-              if(carnetservice.loadCarstAdmin(documentId)== null){
-                 NotificationsService.showSnackbar('Codigo QR Invalido verificado');
-              }else{
-                //String d=carnetservice.loadCarstAdmin(documentId);
-                final ScanModel scans= await carnetservice.loadCarstAdmin(documentId);
-                 if(scans.tipo==null){
+                final Usuario scans= await carnetservice.loadCarstAdmin(await encryptionService.descrypData(barcodeScanRes));
+                 if(scans.documento ==null){
                    displayDialono(context);
                    }else{
                    displayDialog(context,scans);
                     }
-               // displayDialog(context, documentId);
-              }
              }
            }
         } catch (e) {
-          NotificationsService.showSnackbar('Codigo QR Invalido');
-        } 
+          print(e);
+          NotificationsService.showSnackbar('$e');
+        }
       },
       )
     );
@@ -246,6 +276,37 @@ class ControlScreen extends StatelessWidget {
         )
       ]
   );
+}
+
+class _Foto extends StatelessWidget {
+  const _Foto({
+    Key? key,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final tamano = MediaQuery.of(context).size;
+    String url= 'https://thumbs.dreamstime.com/z/retrato-de-hombre-mirando-la-c%C3%A1mara-sobre-el-fondo-blanco-158750254.jpg';
+    final  url1= null;
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Center(
+        child: Container(
+          height: tamano.height*0.2 ,
+          width: tamano.width*0.5,
+          child: url == null
+        ? Image(image: const AssetImage('assets/persona.jpeg'),
+          fit: BoxFit.cover
+        )
+        : FadeInImage(
+          placeholder: const AssetImage('assets/loading.gif'),
+          image: NetworkImage(url),
+          fit: BoxFit.cover
+        )
+        ),
+      ),
+    );
+    
+  }
 }
 
 class _ProductForm extends StatelessWidget {

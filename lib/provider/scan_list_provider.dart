@@ -16,20 +16,17 @@ class ScanListProvider  {
     // }
     return nuevoScan;
   }
+  // cargarScans() async {
+  //   final scans = await DBProvider.db.getTodosLosScans();
+  //   this.scans = [...scans];
+  // }
 
-  cargarScans() async {
-    final scans = await DBProvider.db.getTodosLosScans();
-    this.scans = [...scans];
-  }
-
-  cargarScansPorTipo(int tipo) async {
-    final scans = await DBProvider.db.getScanById(tipo);
-    //this.scans = [...scans];
-    print( this.scans);
-
-
-    
-  }
+  // cargarScansPorTipo(int tipo) async {
+  //   final scans = await DBProvider.db.getScanById(tipo);
+  //   //this.scans = [...scans];
+  //   print( this.scans); 
+  // }
 
  
+
 }

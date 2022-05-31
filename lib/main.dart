@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/services.dart';
 import 'package:gob_cordoba/ui/screen/screens.dart';
 import 'package:gob_cordoba/ui/widgets/style_widget.dart';
@@ -12,6 +13,8 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider( create: ( _ ) => CarnetService()),
         ChangeNotifierProvider( create: ( _ ) => AuthService()),
+        ChangeNotifierProvider( create: ( _ ) => InputsDocumentForms()),
+
       ],
        child:  MyApp(),
     );
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ControlGob',
       debugShowCheckedModeBanner: false,
-      initialRoute: 'home',
+      initialRoute: 'check',
       routes: {
         'home'  : (_) =>  const HomeScreen(),
         'login'  : (_) =>  const LoginScreen(),

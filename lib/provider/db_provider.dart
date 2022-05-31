@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/models/user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,69 +27,133 @@ class DBProvider {
   Future<Database> initDB() async {
     //Path de donde almaceneremos la base de datos
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'QcansDB.db');
+    final path = join(documentsDirectory.path, 'wercansDB.db');
     // Crear base de datos
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute('''
-            CREATE TABLE scans(
-              document TEXT,
-              email TEXT,
-              name TEXT
-              password TEXT
+            CREATE TABLE usuario(
+              _id TEXT,
+              nombre1 TEXT,
+              nombre2 TEXT, 
+              apellido1 TEXT,
+              apellido2 TEXT,
+              cargo TEXT,
+              documento TEXT, 
+              dependencia TEXT,
+              correo TEXT,
+              img TEXT, 
+              rol TEXT, 
+              estado TEXT,
+              verfi  TEXT
               )
       ''');
     });
   }
 
-  nuevoScanRaw(ScanModel nuevoScan) async {
-    final id = 1;
-     nuevoScan.id;
-    final tipo = nuevoScan.tipo;
-    final valor = nuevoScan.valor;
+//   nuevoScanRaw(ScanModel nuevoScan) async {
+//     final id = 1;
+//      nuevoScan.id;
+//     final tipo = nuevoScan.tipo;
+//     final valor = nuevoScan.valor;
 
-    // Verificar la base de datos
-    final db = await database;
+//     // Verificar la base de datos
+//     final db = await database;
 
-    final res = await db.rawInsert('''
-    INSERT INTO Scans(id,tipo,valor) VALUES (${id},${tipo},${valor})
+//     final res = await db.rawInsert('''
+//     INSERT INTO Scans(id,tipo,valor) VALUES (${id},${tipo},${valor})
 
-''');
-    return res;
-  }
+// ''');
+//     return res;
+//   }
 
   Future<int> nuevoScan(Usuario nuevoScan) async {
     final db = await database;
-    final res = await db.insert('Scans', nuevoScan.toMap());
-    print(res);
-    return res;
+    try {
+          print('--------------PASO POR EL ERROR ---------------');
+    final res = await db.insert('usuario', nuevoScan.toJson());
+          print('------------QQQQQQQQQQQQQQQQQQQ----------------');
+          print(res);
+          return res;
+    } catch (e) {
+      print('ENTRO AL ERRORORNG --------');
+      print(e);
+    }
+    return 1;
   }
 
-  Future <ScanModel> getScanById(int id) async {
-    final db = await database;
-    final List<Map<String, dynamic >> res = await db.query('Scans', where: 'id= ?', whereArgs: [id]);
-    ScanModel dato= new ScanModel();
+   Future <Usuario> getScanById(String id) async {
+    print(id);
+    Usuario dato= new Usuario();
+
+    try {
+      final db = await database;
+    final List<Map<String, dynamic >> res = await db.query('usuario', where: '_id= ?', whereArgs: [id]);
+    Usuario dato= new Usuario();
+    print(res);
+    print('----------ww-w-w--w-w-w-w-w-w-w-w--w-w-w-w-w--w-w-w-w-w-');
     if(res.isNotEmpty){
-    ScanModel dato= new ScanModel();
-    dato=ScanModel.fromJson(res.first);
-    print(dato.valor);
+    dato=Usuario.fromJson(res.first);
+    print('--------r-rr-r-r--r-r-r-r');
+    print(dato.cargo!);
+    print('----we--ew-e-ew-ew-e-w-ew-ew');
     return  dato;
     }else{
+    print('----ERROR EN LA CONSULTA ');
     return dato;
     }
+    } catch (e) {
+      print('Entro al chach ');
+      print(e);
+    }
+    return dato;
+  }
+
+  // Future <ScanModel> getScanById(int id) async {
+  //   final db = await database;
+  //   final List<Map<String, dynamic >> res = await db.query('Scans', where: 'id= ?', whereArgs: [id]);
+  //   ScanModel dato= new ScanModel();
+  //   if(res.isNotEmpty){
+  //   ScanModel dato= new ScanModel();
+  //   dato=ScanModel.fromJson(res.first);
+  //   print(dato.valor);
+  //   return  dato;
+  //   }else{
+  //   return dato;
+  //   }
     // ScanModel dato= new ScanModel();
     // dato=ScanModel.fromJson(res.first);
     // print(dato.valor);
     // return  dato;
-  }
 
 
-  Future<List<ScanModel>> getTodosLosScans() async {
+ Future<List<Usuario>> getTodosLosScans() async {
     final db = await database;
-    final res = await db.query('Scans');
-    //print(res);
-    return res.isNotEmpty ? res.map((s) => ScanModel.fromJson(s)).toList() : [];
+    final res = await db.query('usuario');
+    print('NJD -------------------------------------------');
+    print(res);
+    print('QQQ -------------------------------------------');
+
+    return res.isNotEmpty ? res.map((s) => Usuario.fromJson(s)).toList() : [];
   }
+
+    Future<int> deleteAllScan() async {
+    final db = await database;
+    final res = await db.rawDelete('''
+    DELETE FROM Scans
+''');
+    return res;
+  }
+
+  }
+
+
+  // Future<List<Usuario>> getTodosLosScans() async {
+  //   final db = await database;
+  //   final res = await db.query('usuario');
+  //   //print(res);
+  //   return res.isNotEmpty ? res.map((s) => Usuario.fromJson(s)).toList() : [];
+  // }
 
 //   Future<List<ScanModel>> getScansPorTipo(String tipo) async {
 //     final db = await database;
@@ -120,4 +184,4 @@ class DBProvider {
 // ''');
 //     return res;
 //   }
-}
+// }

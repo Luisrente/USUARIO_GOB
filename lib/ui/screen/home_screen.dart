@@ -4,8 +4,9 @@ import 'package:gob_cordoba/services/services.dart';
 import 'package:gob_cordoba/ui/screen/screens.dart';
 import 'package:gob_cordoba/ui/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/models.dart';
+import '../../models/user.dart';
 
 class HomeScreen extends StatelessWidget {
    
@@ -13,13 +14,14 @@ class HomeScreen extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
   final tam = MediaQuery.of(context).size.height * 0.17;
   final carnetservice= Provider.of<CarnetService>(context);
   final dato= carnetservice.loadCartUser();
+  // print(dato.nombre1);
   final authService= Provider.of<AuthService>(context , listen: false);
   final storage = new FlutterSecureStorage();
   final  t= authService.readToken();
-
   if(carnetservice.isLoading) return const LoadingScreen();
     return  Scaffold(
        appBar: 
@@ -35,6 +37,8 @@ class HomeScreen extends StatelessWidget {
         leading: IconButton(
           icon: const  Icon( Icons.login_outlined , color: Colors.black),
           onPressed: () async{
+            final pref = await SharedPreferences.getInstance();
+            await pref.clear();
             await authService.logunt();
             Navigator.pushReplacementNamed(context, 'login');
           }
@@ -46,7 +50,7 @@ class HomeScreen extends StatelessWidget {
         future: carnetservice.loadCartUser(),
         builder: (context, snapshot) {
           if(snapshot.hasData){
-            return CardWidget(dato: snapshot.data!);
+          return CardWidget(dato: snapshot.data!);
           }else{
             return const Center(
               child:  CircularProgressIndicator(
