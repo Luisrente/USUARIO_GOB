@@ -20,6 +20,7 @@ class CarnetService extends ChangeNotifier{
   final storage = new FlutterSecureStorage();
   List<Usuario> usuarios = [];
   late Usuario usuario;
+  Usuario selectedProduct= Usuario();
 
    ScanListProvider base= new ScanListProvider();
 
@@ -38,21 +39,47 @@ class CarnetService extends ChangeNotifier{
 
 
    Future <Usuario> loadCartUser() async {
-    Usuario dato1 = Usuario();
-
+  Usuario dato1 = Usuario();
+  print('loadCartUser');
    SharedPreferences prefs = await SharedPreferences.getInstance();
    String? kitJson = prefs.getString("content");
     final String? userStr = prefs.getString('content');
     print('--------------------------');
-    print(userStr);
     print('--------------------------');
+
     if (userStr != null) {
       print('entro');
       Map<String, dynamic> userMap = jsonDecode(userStr);
-      return Usuario.fromJson(userMap);
+      dato1=Usuario.fromJson(userMap);
     }
+
+    try {
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios/${dato1.documento}');
+    final resp = await http.get(uri, 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+    if ( resp.statusCode == 200 ) {
+          print('fnfjfnfjfjfjnfnfjfjf');
+      final loginResponse = loginResponseFromJson( resp.body );
+      usuario = loginResponse.usuario;
+      // selectedProduct.img=usuario.img;
+      return usuario;
+    } else {
+      dato1=usuario;
+      // selectedProduct.img=usuario.img;
+      return usuario;
+    }
+    } catch (e) {
+      print(e);
+      NotificationsService.showSnackbar("Comunicarse con el admin loadcard ");
       return dato1;
   }
+
+   }
+
+   
 
   Future <Usuario> loadCarstAdmin( String id) async {
     isLoading = true;
@@ -126,6 +153,53 @@ class CarnetService extends ChangeNotifier{
     // print('con exito');
     // isLoading= false;
     // notifyListeners();
+
+  }
+
+     Future<String?>uploadImage(String? path) async {
+
+ Usuario dato1 = Usuario();
+  print('loadCartUser');
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   String? kitJson = prefs.getString("content");
+    final String? userStr = prefs.getString('content');
+    print('--------------------------');
+    print('--------------------------');
+
+    if (userStr != null) {
+      print('entro');
+      Map<String, dynamic> userMap = jsonDecode(userStr);
+      dato1=Usuario.fromJson(userMap);
+    }
+
+    this.selectedProduct.img = path;
+    this.newPictureFile = File.fromUri(Uri(path: path));
+    if( this.newPictureFile == null) return null;
+    this.isSaving= true;
+     notifyListeners();
+     final url = Uri.parse('https://apigob.herokuapp.com/api/uploads/usuarios/${dato1.id}');
+     final imageUploadRequest = http.MultipartRequest('PUT',url);
+     final file= await http.MultipartFile.fromPath('archivo', newPictureFile!.path);
+     imageUploadRequest.files.add(file);
+     final streamResponse= await imageUploadRequest.send();
+     final resp = await http.Response.fromStream(streamResponse);
+    if(resp.statusCode != 200 && resp.statusCode != 201){
+      print('Algo salio mal');
+      print(resp.body);
+      return null;
+    }
+    notifyListeners();
+    this.newPictureFile=null;
+    final decodedData = json.decode(resp.body);
+    return decodedData['secure_url'];
+  }
+    void updateSelectedProductImage( String? path){
+    this.selectedProduct.img = path;
+    this.newPictureFile = File.fromUri(Uri(path: path));
+    notifyListeners();
+    }
+
+   
   }
 
   
@@ -192,8 +266,3 @@ class CarnetService extends ChangeNotifier{
   //   return decodedData['secure_url'];
 
   // }
-
-
-
-
-}

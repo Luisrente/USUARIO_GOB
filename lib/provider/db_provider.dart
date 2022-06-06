@@ -85,10 +85,9 @@ class DBProvider {
    Future <Usuario> getScanById(String id) async {
     print(id);
     Usuario dato= new Usuario();
-
     try {
       final db = await database;
-    final List<Map<String, dynamic >> res = await db.query('usuario', where: '_id= ?', whereArgs: [id]);
+    final List<Map<String, dynamic >> res = await db.query('usuario', where: 'documento= ?', whereArgs: [id]);
     Usuario dato= new Usuario();
     print(res);
     print('----------ww-w-w--w-w-w-w-w-w-w-w--w-w-w-w-w--w-w-w-w-w-');

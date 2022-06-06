@@ -62,20 +62,25 @@ class AuthService extends ChangeNotifier{
       return decodedResp['error']['message'];
     }
   }
+  
 
   Future<String> login1( String email, String password ) async {
     final data = {
       'correo': email,
       'password': password
     };
+
     try {
+      
     final uri = Uri.parse('https://apigob.herokuapp.com/api/auth/login');
     final resp = await http.post(uri, 
       body: jsonEncode(data),
-      headers: {
+      headers:{
         'Content-Type': 'application/json'
       }
     );
+
+    print('Entro metodo 1');
       if ( resp.statusCode == 200 ) {
       final loginResponse = loginResponseFromJson( resp.body );
       usuario = loginResponse.usuario;
@@ -83,17 +88,16 @@ class AuthService extends ChangeNotifier{
        prefs.setString('content', jsonEncode(usuario.toJson()));
        String? w = await prefs.getString('content');
        print(w);
-
-
       await storage.write(key:'token',value:usuario.rol);  
-      await storage.write(key:'id',value:usuario.id);    
+      await storage.write(key:'id',value:usuario.id); 
+      print('luis');   
       if (usuario.verfi=="false"){
         return '1';
       }
-      if (usuario.estado=="true" && usuario.rol=='ADMIN_ROLE'){
+      if (usuario.rol=='ADMIN_ROLE'){
         return '2';
       }
-      if (usuario.estado=="true" && usuario.rol=='USER_ROLE' ){
+      if (usuario.rol=='USER_ROLE'){
         return '3';
       }
       // await this._guardarToken(loginResponse.token);

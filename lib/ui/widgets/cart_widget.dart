@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gob_cordoba/data/encryption_service.dart';
+import 'package:gob_cordoba/provider/product_forma_provicer.dart';
 import 'package:gob_cordoba/services/services.dart';
+import 'package:gob_cordoba/ui/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -16,12 +18,13 @@ class CardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final carnetservice= Provider.of<CarnetService>(context,listen: false);
+    final carnetservice= Provider.of<CarnetService>(context);
     final EncryptionService encryptionService= new EncryptionService();
     // String documentId = dato.document!;
     // print(documentId);
     double height = MediaQuery.of(context).size.height* 0.75;
     double padding = MediaQuery.of(context).size.width* 0.07;
+    print(dato.img);
     return Padding(
       padding:  EdgeInsets.symmetric(horizontal: padding , vertical: 30),
       child: Container(
@@ -62,7 +65,10 @@ class CardWidget extends StatelessWidget {
                           // mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment : CrossAxisAlignment.center,
                           children: [
-                            _Foto(),
+                            ChangeNotifierProvider(
+                              create: ( _ ) => ProductFormProvider( carnetservice.selectedProduct ),
+                              child: ProductImage(url:dato.img)),
+                            // ProductImage(url:''),
                             Padding(
                               padding: const EdgeInsets.only(top: 2, bottom: 10 ),
                               child: Column(
@@ -188,9 +194,12 @@ class _CodigoQR extends StatelessWidget {
   }
 }
 class _Foto extends StatelessWidget {
+
+  final foto;
   
   const _Foto({
-    Key? key,
+    Key? key, 
+    required this.foto,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -203,16 +212,18 @@ class _Foto extends StatelessWidget {
         child: Container(
           height: tamano.height*0.2 ,
           width: tamano.width*0.5,
-          child: url == null
-        ? Image(image: const AssetImage('assets/persona.jpeg'),
-          fit: BoxFit.cover
-        )
-        : FadeInImage(
-          placeholder: const AssetImage('assets/loading.gif'),
-          image: NetworkImage(url),
-          fit: BoxFit.cover
-        )
+          child: ProductImage(url: foto)
         ),
+        //   child: url == null
+        // ? Image(image: const AssetImage('assets/persona.jpeg'),
+        //   fit: BoxFit.cover
+        // )
+        // : FadeInImage(
+        //   placeholder: const AssetImage('assets/loading.gif'),
+        //   image: NetworkImage(url),
+        //   fit: BoxFit.cover
+        // )
+        // ),
       ),
     );
   }
@@ -254,7 +265,5 @@ class Cargo extends StatelessWidget {
   BoxDecoration _buildBoxDecoration() => BoxDecoration(
     color: Colors.blue,
     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25),  topLeft: Radius.circular(25)  )
-
-
   );
 }

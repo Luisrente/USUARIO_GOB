@@ -31,7 +31,7 @@ class Usuario {
     final String? documento;
     final String? dependencia;
     final String? correo;
-    final String? img;
+          String? img;
     final String? rol;
     final String? estado;
     final String? verfi;

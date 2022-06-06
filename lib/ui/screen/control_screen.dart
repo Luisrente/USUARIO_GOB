@@ -9,6 +9,7 @@ import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/check_internet.dart';
 import 'package:gob_cordoba/services/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/widgets.dart';
 
 class ControlScreen extends StatelessWidget {
@@ -60,7 +61,7 @@ class ControlScreen extends StatelessWidget {
                         content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children:[
-                              _Foto(),
+                              ProductImage(url: model.img),
                               Row(
                                 children:  [
                                  const  Text('Documento  : ', style: TextStyle(fontWeight: FontWeight.bold) ),
@@ -149,9 +150,9 @@ class ControlScreen extends StatelessWidget {
         estado: "false",
         verfi: "true"
     );
-   print( DBProvider.db.getScanById('629410aaf538dbfd9229e9b6'));
-   DBProvider.db.getTodosLosScans();
-   DBProvider.db.nuevoScan(dato);
+  //  print( DBProvider.db.getScanById('629410aaf538dbfd9229e9b6'));
+  //  DBProvider.db.getTodosLosScans();
+  //  DBProvider.db.nuevoScan(dato);
     return  Scaffold(
       appBar: AppBar(
          actions:[
@@ -165,6 +166,8 @@ class ControlScreen extends StatelessWidget {
       leading: IconButton(
           icon: const  Icon( Icons.login_outlined , color: Colors.black),
           onPressed: () async{
+            final pref = await SharedPreferences.getInstance();
+            await pref.clear();
             await authService.logunt();
             Navigator.pushReplacementNamed(context, 'login');
           }
