@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gob_cordoba/services/auth_service.dart';
+import 'package:gob_cordoba/services/carnet_services.dart';
 import 'package:gob_cordoba/services/notications_service.dart';
 import 'package:gob_cordoba/ui/widgets/widgets.dart';
 import 'package:provider/provider.dart';
@@ -124,8 +125,8 @@ class _Login_Form extends StatelessWidget {
               onPressed:  loginForm.isLoading ? null : () async {
                 FocusScope.of(context).unfocus();
                 final authService= Provider.of<AuthService>(context, listen:false);
+                // final carnetservice= Provider.of<CarnetService>(context,listen:false);
                 if(!loginForm.isValidForm()) return ;
-
                loginForm.isLoading= true;
                final String errorMessag= await authService.login1(loginForm.email,loginForm.password);
                print('------------------------------');
@@ -134,7 +135,14 @@ class _Login_Form extends StatelessWidget {
                 if(errorMessag == '1'){
                 Navigator.pushReplacementNamed(context, 'register');
                 }
+                if(errorMessag == '4'){
+                // NotificationsService.showSnackbar("Loading Database ");
+                // await carnetservice.datosbase();
+                Navigator.pushReplacementNamed(context, 'register');
+                }
                 if(errorMessag == '2'){
+                // NotificationsService.showSnackbar("Loading Database ");
+                // await carnetservice.datosbase();
                 Navigator.pushReplacementNamed(context, 'control');
                 }
                 if(errorMessag == '3'){

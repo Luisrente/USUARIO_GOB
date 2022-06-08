@@ -34,29 +34,25 @@ class ProductImage extends StatelessWidget {
         )
       ]
     );
-
     Widget getImage( String picture) {
       if( picture == '')
       return const Image(
                 image:  AssetImage('assets/persona.jpeg'),
                 fit: BoxFit.cover
                 );
-
       if(picture.startsWith('http')){
-
         try {
-
           //  return FadeInImage(
           //     image: NetworkImage( this.url! ),
           //     placeholder: const  AssetImage('assets/loading.gif'),
           //     fit: BoxFit.cover,
           //     );
+
            return CachedNetworkImage(
               // placeholder: CircularProgressIndicator(),
               imageUrl: this.url!,
               fit: BoxFit.cover
             );
-          
         } catch (e) {
          return const Image(
                 image:  AssetImage('assets/persona.jpeg'),

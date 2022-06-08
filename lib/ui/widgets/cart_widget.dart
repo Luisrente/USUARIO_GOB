@@ -237,6 +237,7 @@ class Cargo extends StatelessWidget {
     Key? key, required  this.dato,
   }) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -261,7 +262,7 @@ class Cargo extends StatelessWidget {
       )
     );
   }
-
+  
   BoxDecoration _buildBoxDecoration() => BoxDecoration(
     color: Colors.blue,
     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25),  topLeft: Radius.circular(25)  )

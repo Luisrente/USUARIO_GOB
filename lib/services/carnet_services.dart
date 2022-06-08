@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gob_cordoba/models/control.dart';
+import 'package:gob_cordoba/models/model/getUsuario.dart';
 import 'package:gob_cordoba/models/model/loginResponse.dart';
 // import 'package:gob_cordoba/models/models.dart';
 import 'package:gob_cordoba/models/user.dart';
@@ -30,8 +32,8 @@ class CarnetService extends ChangeNotifier{
 
   CarnetService(){
     this.loadCartUser();
-
   }
+
  Future<String>readData()async{
   return  await storage.read(key:'data') ?? '';
   }
@@ -61,7 +63,6 @@ class CarnetService extends ChangeNotifier{
       }
     );
     if ( resp.statusCode == 200 ) {
-          print('fnfjfnfjfjfjnfnfjfjf');
       final loginResponse = loginResponseFromJson( resp.body );
       usuario = loginResponse.usuario;
       // selectedProduct.img=usuario.img;
@@ -76,16 +77,13 @@ class CarnetService extends ChangeNotifier{
       NotificationsService.showSnackbar("Comunicarse con el admin loadcard ");
       return dato1;
   }
-
    }
-
-   
 
   Future <Usuario> loadCarstAdmin( String id) async {
     isLoading = true;
     notifyListeners();
     Usuario dato1 = Usuario();
-
+    // datosbase( );
     try {
     final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios/${id}');
     final resp = await http.get(uri, 
@@ -99,26 +97,72 @@ class CarnetService extends ChangeNotifier{
       usuario = loginResponse.usuario;
       return usuario;
     } else {
-      final Usuario scans= await DBProvider.db.getScanById(id);
+    }
+    } catch (e) {
+     final Usuario scans= await DBProvider.db.getScanById(id);
      if(scans.apellido1==null){
        print('null');
      }else{
        return scans;
      } 
     }
-    } catch (e) {
-      NotificationsService.showSnackbar("Comunicarse con el admin ");
-    }
     return dato1;
-    
   }
 
-  datosbase( ) async {  
+
+    Future  loadControlAdmin( Control control ) async {
+    isLoading = true;
+    notifyListeners();
+    Usuario dato1 = Usuario();
+    try {
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/control');
+    final resp = await http.post(uri, 
+      body: jsonEncode(control),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    );
+    await cargaControl();
+    print(resp.statusCode);
+  
+    } catch (e) {
+      await DBProvider.db.nuevocontrol(control);
+    }
+    return dato1;
+  }
+
+
+    cargaControl() async {
+      List<Control> control = [];
+       control= await DBProvider.db.getTodosLosControl();
+
+       if(control.length!=0){
+         for (var i = 0; i < control.length; i++) {
+         try {
+            final uri = Uri.parse('https://apigob.herokuapp.com/api/control');
+            final resp = await http.post(uri, 
+            body: jsonEncode(control[i]),
+            headers:{
+            'Content-Type': 'application/json'
+            }
+            ); 
+         } catch (e) {
+           print(e);
+         }
+         }
+         await DBProvider.db.dtrucneAllScan();
+       }else{
+
+       }
+      
+    }
+
+
+
+    datosbase( ) async {  
     isLoading = true;
     notifyListeners();
     Usuario dato2 = Usuario();
-
-
     try {
     final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios');
     final resp = await http.get(uri, 
@@ -126,25 +170,21 @@ class CarnetService extends ChangeNotifier{
         'Content-Type': 'application/json'
       }
     );
-    print('paso');
-    if ( resp.statusCode == 200 ) {
-      final loginResponse = loginResponseFromJson( resp.body );
-      final  usuarioi = loginResponse.usuario;
-      print(usuarioi);
 
+    if ( resp.statusCode == 200 ) {
+      print(resp);
+      print('paso por el metodo base(dfdfdfdfd)');      
+      final loginResponse = getsUsuarioFromJson( resp.body );
+        usuarios = loginResponse.usuario;
+      print(usuarios[0]);
       for (var i = 0; i < usuarios.length-1 ; i++) { 
       final s =  await DBProvider.db.nuevoScan(usuarios[i]);
-    }
-    } else {
-    //   final ScanModel scans= await DBProvider.db.getScanById(1);
-    //  if(scans.tipo==null){
-    //    print('null');
-    //  }else{
-    //    return scans;
-    //  } 
-    }
+      }
+            final s =  await DBProvider.db.getTodosLosScans();
+            print(s.length);
+    } 
     } catch (e) {
-      NotificationsService.showSnackbar("Comunicarse con el admin ");
+      NotificationsService.showSnackbar("Comunicarse con admin base local ");
     }
 
     // for (var i = 0; i < usuarios.length-1 ; i++) { 
@@ -153,13 +193,13 @@ class CarnetService extends ChangeNotifier{
     // print('con exito');
     // isLoading= false;
     // notifyListeners();
-
   }
 
-     Future<String?>uploadImage(String? path) async {
 
- Usuario dato1 = Usuario();
-  print('loadCartUser');
+   Future<String?>uploadImage(String? path) async {
+
+   Usuario dato1 = Usuario();
+   print('loadCartUser');
    SharedPreferences prefs = await SharedPreferences.getInstance();
    String? kitJson = prefs.getString("content");
     final String? userStr = prefs.getString('content');
@@ -193,13 +233,12 @@ class CarnetService extends ChangeNotifier{
     final decodedData = json.decode(resp.body);
     return decodedData['secure_url'];
   }
+
     void updateSelectedProductImage( String? path){
     this.selectedProduct.img = path;
     this.newPictureFile = File.fromUri(Uri(path: path));
     notifyListeners();
     }
-
-   
   }
 
   

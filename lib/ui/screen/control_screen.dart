@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:gob_cordoba/data/encryption_service.dart';
 import 'package:gob_cordoba/models/carnet_model.dart';
+import 'package:gob_cordoba/models/control.dart';
 import 'package:gob_cordoba/models/models.dart';
 import 'package:gob_cordoba/models/user.dart';
 import 'package:gob_cordoba/provider/db_provider.dart';
@@ -16,6 +19,7 @@ class ControlScreen extends StatelessWidget {
    
   const ControlScreen({Key? key}) : super(key: key);
   void displayDialono (BuildContext context){
+    final carnetservice= Provider.of<CarnetService>(context,listen:false);
     showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -46,6 +50,8 @@ class ControlScreen extends StatelessWidget {
   }
   
   void displayDialog (BuildContext context , Usuario model){
+        final carnetservice= Provider.of<CarnetService>(context,listen:false);
+
     showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -108,8 +114,35 @@ class ControlScreen extends StatelessWidget {
                                     icon: const Icon(Icons.check),
                                     style: ElevatedButton. styleFrom(
                                     primary: Colors.green),
-                                    onPressed: () {
-                                     // widget.check!.terms = true;
+                                    onPressed: ()  async {
+                                       Usuario dato1 = Usuario();
+
+                                        print('loadCartUser');
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        String? kitJson = prefs.getString("content");
+                                          final String? userStr = prefs.getString('content');
+                                          print('--------------------------');
+                                          print('--------------------------');
+
+                                          if (userStr != null) {
+                                            print('entro');
+                                            Map<String, dynamic> userMap = jsonDecode(userStr);
+                                            dato1=Usuario.fromJson(userMap);
+                                          }
+                                       DateTime now = new DateTime.now();
+                                      Control con = Control(
+                                           documentoAdmin:dato1.documento,
+                                           nombreAdmin:dato1.nombre1,
+                                           apellidoAdmin:dato1.apellido1,
+                                           documentoUser:model.documento,
+                                           nombreUser:model.nombre1,
+                                           apellidoUser:model.apellido1,
+                                           cargoUser:model.cargo,
+                                           dependenciaUser:model.dependencia,
+                                           hora:"${now}",
+                                      );
+                                       await carnetservice.loadControlAdmin(con);
+                                       print('jfjfjfjfjjfjfjfjrururururururur');
                                       Navigator.pop(context);
                                     },
                                     label: const Text('Aceptar ', style: TextStyle(fontSize: 15))
@@ -133,23 +166,24 @@ class ControlScreen extends StatelessWidget {
    print(con);
    final carnetservice= Provider.of<CarnetService>(context);
    final authService= Provider.of<AuthService>(context , listen: false);
-    final double tam = MediaQuery.of(context).size.height * 0.17;
-
-    Usuario dato = Usuario(
-        id: "629410aaf538dbfd9229e9b6",
-        nombre1: "Qluis F",
-        nombre2: "",
-        apellido1: "Renteria",
-        apellido2: "Martineez",
-        cargo: "Secretario",
-        documento: "234512337",
-        dependencia: "Sec.Ambiente",
-        correo: "Luis4@gmail.com",
-        img: "",
-        rol: "USER_ROLE",
-        estado: "false",
-        verfi: "true"
-    );
+   final double tam = MediaQuery.of(context).size.height * 0.17;
+  //  carnetservice.datosbase();
+   
+    // Usuario dato = Usuario(
+    //     id: "629410aaf538dbfd9229e9b6",
+    //     nombre1: "Qluis F",
+    //     nombre2: "",
+    //     apellido1: "Renteria",
+    //     apellido2: "Martineez",
+    //     cargo: "Secretario",
+    //     documento: "234512337",
+    //     dependencia: "Sec.Ambiente",
+    //     correo: "Luis4@gmail.com",
+    //     img: "",
+    //     rol: "USER_ROLE",
+    //     estado: "false",
+    //     verfi: "true"
+    // );
   //  print( DBProvider.db.getScanById('629410aaf538dbfd9229e9b6'));
   //  DBProvider.db.getTodosLosScans();
   //  DBProvider.db.nuevoScan(dato);

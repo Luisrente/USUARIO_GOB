@@ -20,8 +20,6 @@ class Control {
         this.cargoUser,
         this.dependenciaUser,
         this.hora,
-        this.id,
-        this.horaInsert,
     });
 
     final String? documentoAdmin;
@@ -33,8 +31,6 @@ class Control {
     final String? cargoUser;
     final String? dependenciaUser;
     final String? hora;
-    final String? id;
-    final DateTime? horaInsert;
 
     factory Control.fromJson(Map<String, dynamic> json) => Control(
         documentoAdmin: json["documentoAdmin"],
@@ -46,8 +42,6 @@ class Control {
         cargoUser: json["cargoUser"],
         dependenciaUser: json["dependenciaUser"],
         hora: json["hora"],
-        id: json["_id"],
-        horaInsert: DateTime.parse(json["horaInsert"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -60,7 +54,5 @@ class Control {
         "cargoUser": cargoUser,
         "dependenciaUser": dependenciaUser,
         "hora": hora,
-        "_id": id,
-        "horaInsert": horaInsert,
     };
 }

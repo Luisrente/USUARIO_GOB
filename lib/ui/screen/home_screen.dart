@@ -14,8 +14,6 @@ class HomeScreen extends StatelessWidget {
    
   const HomeScreen({Key? key}) : super(key: key);
 
-
-
     void displayDialog (BuildContext context , String model){
     final carnetservice= Provider.of<CarnetService>(context,listen:false);
     showDialog(
@@ -88,7 +86,6 @@ class HomeScreen extends StatelessWidget {
   final storage = new FlutterSecureStorage();
   final  t= authService.readToken();
 
-
   if(carnetservice.isLoading) return const LoadingScreen();
     return  Scaffold(
        appBar: 
@@ -116,9 +113,15 @@ class HomeScreen extends StatelessWidget {
       ),
     ),
       toolbarHeight: kToolbarHeight,
-        leading: IconButton(
-          icon: const  Icon( Icons.menu , color: Colors.black),
-          onPressed: () async {
+
+
+        leading: PopupMenuButton(
+                  icon: const  Icon( Icons.menu , color: Colors.black),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    child: Text("First"),
+
+                    onTap: () async {
                        final picker = new ImagePicker();
                        final PickedFile? pickedFile = await picker.getImage(
                          source: ImageSource.gallery,
@@ -133,7 +136,37 @@ class HomeScreen extends StatelessWidget {
                        print( 'Tenemos imagen ${pickedFile.path}');
                       //  carnetservice.uploadImage(pickedFile.path);
                      },
-        ), 
+                    value: 1,
+                  ),
+                  PopupMenuItem(
+                    child: Text("Second"),
+                    value: 2,
+                  )
+                ]
+            ),
+
+        // leading: IconButton(
+        //   icon: const  Icon( Icons.menu , color: Colors.black),
+        //   onPressed: () async {
+        //                final picker = new ImagePicker();
+        //                final PickedFile? pickedFile = await picker.getImage(
+        //                  source: ImageSource.gallery,
+        //                  imageQuality: 100
+        //                );
+        //                if( pickedFile == null){
+        //                  print('No selecciono nada');
+        //                  return;
+        //                }
+        //                displayDialog(context,pickedFile.path);
+        //               //  ShowImg(model: pickedFile.path);
+        //                print( 'Tenemos imagen ${pickedFile.path}');
+        //               //  carnetservice.uploadImage(pickedFile.path);
+        //              },
+        // ),
+
+
+
+
         backgroundColor: Colors.white,
         elevation: 1
       ),
@@ -151,18 +184,6 @@ class HomeScreen extends StatelessWidget {
           }
         }
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
-        child:  const Icon(Icons.qr_code_2_outlined),
-        onPressed: ()  { 
-        try {
-          
-        } catch (e) {
-          print(e);
-          NotificationsService.showSnackbar('$e');
-        }
-      },
-      )
       // bottomNavigationBar: const CustomNavigatonBar (),
     );
   }

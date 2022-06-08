@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:gob_cordoba/models/control.dart';
 import 'package:gob_cordoba/models/user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -16,18 +17,15 @@ class DBProvider {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-
     print('entro aqi');
-
     _database = await initDB();
-
     return _database!;
   }
   
   Future<Database> initDB() async {
     //Path de donde almaceneremos la base de datos
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'wercansDB.db');
+    final path = join(documentsDirectory.path, 'ercansDB.db');
     // Crear base de datos
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
@@ -46,6 +44,20 @@ class DBProvider {
               rol TEXT, 
               estado TEXT,
               verfi  TEXT
+              )
+      ''');
+
+      await db.execute('''
+            CREATE TABLE control(
+              documentoAdmin TEXT,
+              nombreAdmin TEXT,
+              apellidoAdmin TEXT, 
+              documentoUser TEXT,
+              nombreUser TEXT,
+              apellidoUser TEXT,
+              cargoUser TEXT, 
+              dependenciaUser TEXT,
+              hora TEXT
               )
       ''');
     });
@@ -81,6 +93,24 @@ class DBProvider {
     }
     return 1;
   }
+
+
+   Future<int> nuevocontrol(Control nuevoScan) async {
+    final db = await database;
+    print(nuevoScan);
+    try {
+          print('--------------PASO POR EL ERROR ---------------');
+    final res = await db.insert('control', nuevoScan.toJson());
+          print('------------QQQQQQQQQQQQQQQQQQQ----------------');
+          print(res);
+          return res;
+    } catch (e) {
+      print('ENTRO AL ERRORORNG --------');
+      print(e);
+    }
+    return 1;
+  }
+
 
    Future <Usuario> getScanById(String id) async {
     print(id);
@@ -132,9 +162,20 @@ class DBProvider {
     print('NJD -------------------------------------------');
     print(res);
     print('QQQ -------------------------------------------');
-
     return res.isNotEmpty ? res.map((s) => Usuario.fromJson(s)).toList() : [];
   }
+
+
+ Future<List<Control>> getTodosLosControl() async {
+    final db = await database;
+    final res = await db.query('control');
+    print('NJD -------------------------------------------');
+    print(res);
+    print('QQQ -------------------------------------------');
+    return res.isNotEmpty ? res.map((s) => Control.fromJson(s)).toList() : [];
+  }
+
+
 
     Future<int> deleteAllScan() async {
     final db = await database;
@@ -143,6 +184,20 @@ class DBProvider {
 ''');
     return res;
   }
+
+   Future<int> dtrucneAllScan() async {
+    final db = await database;
+    final res = await db.rawDelete('''
+    DELETE FROM control
+''');
+
+
+
+    return res;
+  }
+
+
+
 
   }
 

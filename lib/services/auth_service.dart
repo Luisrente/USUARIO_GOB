@@ -17,27 +17,27 @@ class AuthService extends ChangeNotifier{
   late Usuario usuario;
 
 
-  Future<String?> createUser(String email, String password ) async{
-    final Map<String , dynamic> authData= {
-      'email': email,
-      'password': password,
-    };
+  // Future<String?> createUser(String email, String password ) async{
+  //   final Map<String , dynamic> authData= {
+  //     'email': email,
+  //     'password': password,
+  //   };
 
 
-    final url= Uri.https(_baseUrl, '/v1/accounts:signUp',{
-      'key': _firebaseToken
-    });
-    final resp= await http.post(url, body: json.encode(authData));
+  //   final url= Uri.https(_baseUrl, '/v1/accounts:signUp',{
+  //     'key': _firebaseToken
+  //   });
+  //   final resp= await http.post(url, body: json.encode(authData));
 
-    final Map<String, dynamic> decodedResp = json.decode(resp.body);
-    if(decodedResp.containsKey('idToken')){
-      //Token hay que guardarlo en un lugar seguro
-      await storage.write(key:'token',value:decodedResp['idToken']);
-      return null;
-    }else {
-      return decodedResp['error']['message'];
-    }
-  }
+  //   final Map<String, dynamic> decodedResp = json.decode(resp.body);
+  //   if(decodedResp.containsKey('idToken')){
+  //     //Token hay que guardarlo en un lugar seguro
+  //     await storage.write(key:'token',value:decodedResp['idToken']);
+  //     return null;
+  //   }else {
+  //     return decodedResp['error']['message'];
+  //   }
+  // }
 
   Future<String?> login(String email, String password ) async{
     final Map<String , dynamic> authData= {
@@ -62,16 +62,14 @@ class AuthService extends ChangeNotifier{
       return decodedResp['error']['message'];
     }
   }
-  
+
 
   Future<String> login1( String email, String password ) async {
     final data = {
       'correo': email,
       'password': password
     };
-
     try {
-      
     final uri = Uri.parse('https://apigob.herokuapp.com/api/auth/login');
     final resp = await http.post(uri, 
       body: jsonEncode(data),
@@ -79,7 +77,6 @@ class AuthService extends ChangeNotifier{
         'Content-Type': 'application/json'
       }
     );
-
     print('Entro metodo 1');
       if ( resp.statusCode == 200 ) {
       final loginResponse = loginResponseFromJson( resp.body );
@@ -90,7 +87,10 @@ class AuthService extends ChangeNotifier{
        print(w);
       await storage.write(key:'token',value:usuario.rol);  
       await storage.write(key:'id',value:usuario.id); 
-      print('luis');   
+      print('luis');
+      if (usuario.verfi=="false" && usuario.rol=='ADMIN_ROLE'){
+        return '4';
+      }
       if (usuario.verfi=="false"){
         return '1';
       }
@@ -140,6 +140,35 @@ class AuthService extends ChangeNotifier{
     return '';
   }
 
+  Future<String> colorTheme( String id ) async {
+    final data = {
+      'color': id
+    };
+
+    try {
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/color');
+    final resp = await http.post(uri, 
+      body: jsonEncode(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+    print('paso');
+    if ( resp.statusCode == 200 ) {
+      print('entro');
+      return '1';
+      // await this._guardarToken(loginResponse.token);
+    } else {
+      final respBody = jsonDecode(resp.body);
+      NotificationsService.showSnackbar(respBody['msg']);
+      return '';
+    }
+    } catch (e) {
+      NotificationsService.showSnackbar("Error color ");
+    }
+    return '';
+  }
+
 
   Future logunt() async {
     await storage.delete(key:'token');
@@ -160,5 +189,8 @@ class AuthService extends ChangeNotifier{
   Future<String>readData()async{
   return  await storage.read(key:'email') ?? '';
   }
+
+
+
 
 }
