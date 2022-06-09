@@ -175,15 +175,14 @@ class DBProvider {
     return res.isNotEmpty ? res.map((s) => Control.fromJson(s)).toList() : [];
   }
 
-
-
     Future<int> deleteAllScan() async {
     final db = await database;
     final res = await db.rawDelete('''
-    DELETE FROM Scans
+    DELETE FROM usuario
 ''');
     return res;
-  }
+    }
+    
 
    Future<int> dtrucneAllScan() async {
     final db = await database;

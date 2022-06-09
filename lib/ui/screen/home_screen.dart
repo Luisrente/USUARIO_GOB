@@ -85,7 +85,7 @@ class HomeScreen extends StatelessWidget {
   final authService= Provider.of<AuthService>(context , listen: false);
   final storage = new FlutterSecureStorage();
   final  t= authService.readToken();
-
+  
   if(carnetservice.isLoading) return const LoadingScreen();
     return  Scaffold(
        appBar: 
@@ -99,7 +99,11 @@ class HomeScreen extends StatelessWidget {
                  final pref = await SharedPreferences.getInstance();
                  await pref.clear();
                  await authService.logunt();
-                 Navigator.pushReplacementNamed(context, 'login');
+                //  Navigator.pushReplacementNamed(context, 'login');
+                  Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: ( _ , __ , ___) => const LoginScreen(),
+                  transitionDuration: const Duration( seconds: 0)
+                ));
                 }
         ),
                ],
@@ -113,34 +117,6 @@ class HomeScreen extends StatelessWidget {
       ),
     ),
       toolbarHeight: kToolbarHeight,
-        // leading: PopupMenuButton(
-        //           icon: const  Icon( Icons.menu , color: Colors.black),
-        //         itemBuilder: (context) => [
-        //           PopupMenuItem(
-        //             child: Text("First"),
-        //             onTap: () async {
-        //                final picker = new ImagePicker();
-        //                final PickedFile? pickedFile = await picker.getImage(
-        //                  source: ImageSource.gallery,
-        //                  imageQuality: 100
-        //                );
-        //                if( pickedFile == null){
-        //                  print('No selecciono nada');
-        //                  return;
-        //                }
-        //                displayDialog(context,pickedFile.path);
-        //               //  ShowImg(model: pickedFile.path);
-        //                print( 'Tenemos imagen ${pickedFile.path}');
-        //               //  carnetservice.uploadImage(pickedFile.path);
-        //              },
-        //             value: 1,
-        //           ),
-        //           PopupMenuItem(
-        //             child: Text("Second"),
-        //             value: 2,
-        //           )
-        //         ]
-        //     ),
         leading: IconButton(
           icon: const  Icon( Icons.menu , color: Colors.black),
           onPressed: () async {

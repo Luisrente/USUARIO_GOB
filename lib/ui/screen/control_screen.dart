@@ -11,6 +11,7 @@ import 'package:gob_cordoba/provider/db_provider.dart';
 import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/check_internet.dart';
 import 'package:gob_cordoba/services/services.dart';
+import 'package:gob_cordoba/ui/screen/screens.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/widgets.dart';
@@ -18,6 +19,7 @@ import '../widgets/widgets.dart';
 class ControlScreen extends StatelessWidget {
    
   const ControlScreen({Key? key}) : super(key: key);
+
   void displayDialono (BuildContext context){
     final carnetservice= Provider.of<CarnetService>(context,listen:false);
     showDialog(
@@ -48,6 +50,8 @@ class ControlScreen extends StatelessWidget {
                         ]);
                   });
   }
+
+
   
   void displayDialog (BuildContext context , Usuario model){
         final carnetservice= Provider.of<CarnetService>(context,listen:false);
@@ -119,10 +123,8 @@ class ControlScreen extends StatelessWidget {
                           )
                         ]);
                   });
-
   }
   
-
   @override
   Widget build(BuildContext context) {
    final EncryptionService encryptionService= new EncryptionService();
@@ -226,7 +228,13 @@ class ControlScreen extends StatelessWidget {
                     }else{
                     loginForm.isLoading= false;
                     // displayDialog(context,scans);
-                    Navigator.pushNamed(context, 'acceso');
+                        Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: ( _ , __ , ___) => const AccesoScreen(),
+                  transitionDuration: const Duration( seconds: 0)
+                ));
+                //Navigator.of(context).pushReplacementNamed('home');
+            
+                    // Navigator.pushNamed(context, 'acceso');
                     // Navigator.pushReplacementNamed(context, 'home');
                     }
                  },           

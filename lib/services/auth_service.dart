@@ -2,8 +2,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gob_cordoba/models/model/getUsuario.dart';
 import 'package:gob_cordoba/models/model/loginResponse.dart';
 import 'package:gob_cordoba/models/user.dart';
+import 'package:gob_cordoba/provider/db_provider.dart';
 import 'package:gob_cordoba/services/notications_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,56 +15,8 @@ class AuthService extends ChangeNotifier{
   final String _baseUrl= 'identitytoolkit.googleapis.com';
   final String _firebaseToken= 'AIzaSyAo_Tm_FOjY5D14kfDWtpF7UgNqS0xE3yU';
   final storage = new FlutterSecureStorage();
-
+List<Usuario> usuarios = [];
   late Usuario usuario;
-
-
-  // Future<String?> createUser(String email, String password ) async{
-  //   final Map<String , dynamic> authData= {
-  //     'email': email,
-  //     'password': password,
-  //   };
-
-
-  //   final url= Uri.https(_baseUrl, '/v1/accounts:signUp',{
-  //     'key': _firebaseToken
-  //   });
-  //   final resp= await http.post(url, body: json.encode(authData));
-
-  //   final Map<String, dynamic> decodedResp = json.decode(resp.body);
-  //   if(decodedResp.containsKey('idToken')){
-  //     //Token hay que guardarlo en un lugar seguro
-  //     await storage.write(key:'token',value:decodedResp['idToken']);
-  //     return null;
-  //   }else {
-  //     return decodedResp['error']['message'];
-  //   }
-  // }
-
-  Future<String?> login(String email, String password ) async{
-    final Map<String , dynamic> authData= {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true
-    };
-    final url= Uri.https(_baseUrl, '/v1/accounts:signInWithPassword',{
-      'key': _firebaseToken
-    });
-    final resp= await http.post(url, body: json.encode(authData));
-    
-    final Map<String, dynamic> decodedResp = json.decode(resp.body);
-    await login1(email,password);
-    if(decodedResp.containsKey('idToken')){
-      //Token hay que guardarlo en un lugar seguro
-      await storage.write(key:'email',value:email);
-      print('Guardo en el storage');
-      await storage.write(key:'token',value:decodedResp['idToken']);      
-      return null;
-    }else {
-      return decodedResp['error']['message'];
-    }
-  }
-
 
   Future<String> login1( String email, String password ) async {
     final data = {
@@ -89,12 +43,14 @@ class AuthService extends ChangeNotifier{
       await storage.write(key:'id',value:usuario.id); 
       print('luis');
       if (usuario.verfi=="false" && usuario.rol=='ADMIN_ROLE'){
+        await datosbase( );
         return '4';
       }
       if (usuario.verfi=="false"){
         return '1';
       }
       if (usuario.rol=='ADMIN_ROLE'){
+         await datosbase( );
         return '2';
       }
       if (usuario.rol=='USER_ROLE'){
@@ -169,12 +125,40 @@ class AuthService extends ChangeNotifier{
     return '';
   }
 
+  datosbase( ) async {  
+    // isLoading = true;
+    notifyListeners();
+    Usuario dato2 = Usuario();
+    try {
+    final uri = Uri.parse('https://apigob.herokuapp.com/api/usuarios');
+    final resp = await http.get(uri, 
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    );
+
+    if ( resp.statusCode == 200 ) {
+      print(resp);
+      print('paso por el metodo base(dfdfdfdfd)');      
+      final loginResponse = getsUsuarioFromJson( resp.body );
+        usuarios = loginResponse.usuario;
+      print(usuarios[0]);
+      for (var i = 0; i < usuarios.length-1 ; i++) { 
+      final s =  await DBProvider.db.nuevoScan(usuarios[i]);
+      }
+            final s =  await DBProvider.db.getTodosLosScans();
+            print(s.length);
+    } 
+    } catch (e) {
+      NotificationsService.showSnackbar("Comunicarse con admin base local ");
+    }
+  }
+
 
   Future logunt() async {
     await storage.delete(key:'token');
-    await storage.delete(key:'email');
-    await storage.delete(key:'name');
-    await storage.delete(key:'document');
+    await storage.delete(key:'id');
+    await DBProvider.db.deleteAllScan();
     return;
   }
 

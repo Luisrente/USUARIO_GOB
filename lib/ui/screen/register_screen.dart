@@ -44,14 +44,6 @@ class RegisterScreen extends StatelessWidget {
               )
             ),
             const SizedBox(height:50),
-             TextButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
-              style: ButtonStyle(
-                overlayColor: MaterialStateProperty.all(Color.fromARGB(255, 6, 151, 235)),
-                shape: MaterialStateProperty.all( const StadiumBorder())
-              ),
-              child: const Text('¿Ya tengo una cuenta? ', style: TextStyle( fontSize: 18, color: Colors.black87)),
-            ),
             const SizedBox(height:50),
           ]
         )
@@ -59,7 +51,6 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 }
-
 class _Login_Form extends StatelessWidget {
 
   const _Login_Form({

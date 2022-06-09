@@ -115,8 +115,6 @@ class CarnetService extends ChangeNotifier{
 
 
    Future  loadControlAdmin( Control control ) async {
-
-
     isLoading = true;
     notifyListeners();
     Usuario dato1 = Usuario();
@@ -190,13 +188,6 @@ class CarnetService extends ChangeNotifier{
     } catch (e) {
       NotificationsService.showSnackbar("Comunicarse con admin base local ");
     }
-
-    // for (var i = 0; i < usuarios.length-1 ; i++) { 
-    //   final s =  await DBProvider.db.nuevoScan(usuarios[i]);
-    // }
-    // print('con exito');
-    // isLoading= false;
-    // notifyListeners();
   }
 
 
