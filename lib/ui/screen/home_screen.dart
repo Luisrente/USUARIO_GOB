@@ -113,41 +113,12 @@ class HomeScreen extends StatelessWidget {
       ),
     ),
       toolbarHeight: kToolbarHeight,
-
-
-        leading: PopupMenuButton(
-                  icon: const  Icon( Icons.menu , color: Colors.black),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    child: Text("First"),
-
-                    onTap: () async {
-                       final picker = new ImagePicker();
-                       final PickedFile? pickedFile = await picker.getImage(
-                         source: ImageSource.gallery,
-                         imageQuality: 100
-                       );
-                       if( pickedFile == null){
-                         print('No selecciono nada');
-                         return;
-                       }
-                       displayDialog(context,pickedFile.path);
-                      //  ShowImg(model: pickedFile.path);
-                       print( 'Tenemos imagen ${pickedFile.path}');
-                      //  carnetservice.uploadImage(pickedFile.path);
-                     },
-                    value: 1,
-                  ),
-                  PopupMenuItem(
-                    child: Text("Second"),
-                    value: 2,
-                  )
-                ]
-            ),
-
-        // leading: IconButton(
-        //   icon: const  Icon( Icons.menu , color: Colors.black),
-        //   onPressed: () async {
+        // leading: PopupMenuButton(
+        //           icon: const  Icon( Icons.menu , color: Colors.black),
+        //         itemBuilder: (context) => [
+        //           PopupMenuItem(
+        //             child: Text("First"),
+        //             onTap: () async {
         //                final picker = new ImagePicker();
         //                final PickedFile? pickedFile = await picker.getImage(
         //                  source: ImageSource.gallery,
@@ -162,11 +133,32 @@ class HomeScreen extends StatelessWidget {
         //                print( 'Tenemos imagen ${pickedFile.path}');
         //               //  carnetservice.uploadImage(pickedFile.path);
         //              },
-        // ),
-
-
-
-
+        //             value: 1,
+        //           ),
+        //           PopupMenuItem(
+        //             child: Text("Second"),
+        //             value: 2,
+        //           )
+        //         ]
+        //     ),
+        leading: IconButton(
+          icon: const  Icon( Icons.menu , color: Colors.black),
+          onPressed: () async {
+                       final picker = new ImagePicker();
+                       final PickedFile? pickedFile = await picker.getImage(
+                         source: ImageSource.gallery,
+                         imageQuality: 100
+                       );
+                       if( pickedFile == null){
+                         print('No selecciono nada');
+                         return;
+                       }
+                       displayDialog(context,pickedFile.path);
+                      //  ShowImg(model: pickedFile.path);
+                       print( 'Tenemos imagen ${pickedFile.path}');
+                      //  carnetservice.uploadImage(pickedFile.path);
+                     },
+        ),
         backgroundColor: Colors.white,
         elevation: 1
       ),

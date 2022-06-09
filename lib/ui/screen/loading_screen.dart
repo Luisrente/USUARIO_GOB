@@ -8,14 +8,14 @@ class LoadingScreen extends StatelessWidget {
     final tam = MediaQuery.of(context).size.height * 0.17;
     return Scaffold(
       appBar: AppBar(
-      //   actions:[
-      //     Padding(
-      //       padding: const EdgeInsets.all(8.0),
-      //       child: Image.asset('assets/logo.png',
-      //           fit: BoxFit.cover, alignment: Alignment.center),
-      //     ),
-      //     SizedBox(width: tam)
-      // ],
+        actions:[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/logo.png',
+                fit: BoxFit.cover, alignment: Alignment.center),
+          ),
+          SizedBox(width: tam)
+      ],
       backgroundColor: Colors.white
       ),
       body: const Center(

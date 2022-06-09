@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         'control'  : (_) =>  const ControlScreen(),
         'check'  : (_) =>  const  CheckAuthScreen(),
         'register'  : (_) =>  const  RegisterScreen(),
+        'acceso'  : (_) =>  const  AccesoScreen(),
         'q'  : (_) =>    Home(),
         
       },

@@ -26,6 +26,7 @@ class CardWidget extends StatelessWidget {
     double padding = MediaQuery.of(context).size.width* 0.07;
     print(dato.img);
     return Padding(
+      // padding:  EdgeInsets.all(0.1),
       padding:  EdgeInsets.symmetric(horizontal: padding , vertical: 30),
       child: Container(
         margin: EdgeInsets.only(top: 30),
@@ -73,14 +74,32 @@ class CardWidget extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 2, bottom: 10 ),
                               child: Column(
                                 children: [
-                                  Text( '${dato.nombre1} ${dato.apellido1} ' , style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold)),
-                    
-                                  Text( '${dato.cargo}',style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+                                  SizedBox(
+                                    child: Text( '${dato.nombre1} ${dato.apellido1} ' , 
+                                    style: TextStyle( fontSize: 15, fontWeight: FontWeight.bold),
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    child: Text( '${dato.cargo}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle( fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                                    softWrap : true,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             _CodigoQR(documento:dato.documento),
-                            Text( 'CC:${dato.documento}',style: TextStyle( fontSize: 23, fontWeight: FontWeight.bold, color: Colors.black)),
+                            Text( 'CC:${dato.documento}',
+                                 style:  const TextStyle( fontSize: 17, fontWeight: FontWeight.bold, color: Colors.black),
+                                 maxLines: 1,
+                                 overflow: TextOverflow.ellipsis,
+                                 ),
                           ]
 
                         )
@@ -90,7 +109,7 @@ class CardWidget extends StatelessWidget {
 
                   const Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Center(child: const Text('www.cordoba.gov.co', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(115, 9, 46, 83)))),
+                    child: Center(child: const Text('www.cordoba.gov.co', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color.fromARGB(115, 9, 46, 83)))),
                   )
                 ],
             
@@ -246,7 +265,7 @@ class Cargo extends StatelessWidget {
       width: MediaQuery.of(context).size.width* 0.16,
       decoration: _buildBoxDecoration(),
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 18, bottom: 25),
         child: Align(
           alignment : Alignment.topCenter,
           child: RotatedBox(

@@ -22,6 +22,7 @@ class CarnetService extends ChangeNotifier{
   final storage = new FlutterSecureStorage();
   List<Usuario> usuarios = [];
   late Usuario usuario;
+  late Usuario usualiorSelect;
   Usuario selectedProduct= Usuario();
 
    ScanListProvider base= new ScanListProvider();
@@ -41,6 +42,7 @@ class CarnetService extends ChangeNotifier{
 
 
    Future <Usuario> loadCartUser() async {
+
   Usuario dato1 = Usuario();
   print('loadCartUser');
    SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -95,6 +97,7 @@ class CarnetService extends ChangeNotifier{
     if ( resp.statusCode == 200 ) {
       final loginResponse = loginResponseFromJson( resp.body );
       usuario = loginResponse.usuario;
+      usualiorSelect=usuario;
       return usuario;
     } else {
     }
@@ -103,6 +106,7 @@ class CarnetService extends ChangeNotifier{
      if(scans.apellido1==null){
        print('null');
      }else{
+       usualiorSelect=scans;
        return scans;
      } 
     }
@@ -110,7 +114,9 @@ class CarnetService extends ChangeNotifier{
   }
 
 
-    Future  loadControlAdmin( Control control ) async {
+   Future  loadControlAdmin( Control control ) async {
+
+
     isLoading = true;
     notifyListeners();
     Usuario dato1 = Usuario();
@@ -130,7 +136,6 @@ class CarnetService extends ChangeNotifier{
     }
     return dato1;
   }
-
 
     cargaControl() async {
       List<Control> control = [];
@@ -156,7 +161,6 @@ class CarnetService extends ChangeNotifier{
        }
       
     }
-
 
 
     datosbase( ) async {  

@@ -38,14 +38,14 @@ class LoginScreen extends StatelessWidget {
                 )
               ),
               const SizedBox(height:50),
-               TextButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, 'register'),
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.all(Color.fromARGB(255, 6, 151, 235)),
-                  shape: MaterialStateProperty.all( const StadiumBorder())
-                ),
-                child: const Text('Create new account ', style: TextStyle( fontSize: 18, color: Colors.black87)),
-              ),
+              //  TextButton(
+              //   onPressed: () => Navigator.pushReplacementNamed(context, 'register'),
+              //   style: ButtonStyle(
+              //     overlayColor: MaterialStateProperty.all(Color.fromARGB(255, 6, 151, 235)),
+              //     shape: MaterialStateProperty.all( const StadiumBorder())
+              //   ),
+              //   child: const Text('Create new account ', style: TextStyle( fontSize: 18, color: Colors.black87)),
+              // ),
               const SizedBox(height:50),
             ]
           )

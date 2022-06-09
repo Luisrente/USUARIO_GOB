@@ -27,7 +27,7 @@ class ControlScreen extends StatelessWidget {
                     return AlertDialog(
                         elevation: 5,
                         title:  Text( 'Usuario no encontrado',
-                            style: TextStyle(color: Colors.blue)),
+                        style: TextStyle(color: Colors.blue)),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadiusDirectional.circular(10)),
                         content: Column(
@@ -51,115 +51,81 @@ class ControlScreen extends StatelessWidget {
   
   void displayDialog (BuildContext context , Usuario model){
         final carnetservice= Provider.of<CarnetService>(context,listen:false);
-
     showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return AlertDialog(
+                      actionsPadding: EdgeInsets.zero,
+                      contentPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                         elevation: 5,
-                         title:  Center(
-                          child:  Text( '${model.nombre1} ${model.apellido1}',
-                              style: TextStyle(color: Colors.black)),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadiusDirectional.circular(10)),
-                        content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children:[
-                              ProductImage(url: model.img),
-                              Row(
-                                children:  [
-                                 const  Text('Documento  : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text(model.documento!)
-                                ]
-                              ),
-
-                               SizedBox(height: 10),
-
-                              Row(
-                                children: [
-                                  const Text('Dependencia : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text('${model.dependencia} ')
-                                ]
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children:  [
-                                 const  Text('Cargo : ', style: TextStyle(fontWeight: FontWeight.bold) ),
-                                  Text('${model.nombre1}',  maxLines: 1)
-                                ]
-                              )
-                            ]
-                            ),
-                        
+                        content: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: CardWidget(dato:model)
+                          ),
                         actions: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ElevatedButton.icon(
-                                    icon: const  Icon(Icons.close),
-                                    style: ElevatedButton. styleFrom(
-                                    primary: Colors.red),
-                                    onPressed: () {
-                                     // widget.check!.terms = true;
-                                      Navigator.pop(context);
-                                    },
-                                    label: const Text('Cancelar', style: TextStyle(fontSize: 15))
-                                ),
-                                SizedBox(width: 10),
-                                ElevatedButton.icon(
-                                    icon: const Icon(Icons.check),
-                                    style: ElevatedButton. styleFrom(
-                                    primary: Colors.green),
-                                    onPressed: ()  async {
-                                       Usuario dato1 = Usuario();
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton.icon(
+                                  icon: const  Icon(Icons.close),
+                                  style: ElevatedButton. styleFrom(
+                                  primary: Colors.red),
+                                  onPressed: () {
+                                   // widget.check!.terms = true;
+                                    Navigator.pop(context);
+                                  },
+                                  label: const Text('Cancelar', style: TextStyle(fontSize: 15))
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton.icon(
+                                  icon: const Icon(Icons.check),
+                                  style: ElevatedButton. styleFrom(
+                                  primary: Colors.green),
+                                  onPressed: ()  async {
+                                     Usuario dato1 = Usuario();
+                                      print('loadCartUser');
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      String? kitJson = prefs.getString("content");
+                                        final String? userStr = prefs.getString('content');
+                                        print('--------------------------');
+                                        print('--------------------------');
 
-                                        print('loadCartUser');
-                                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        String? kitJson = prefs.getString("content");
-                                          final String? userStr = prefs.getString('content');
-                                          print('--------------------------');
-                                          print('--------------------------');
-
-                                          if (userStr != null) {
-                                            print('entro');
-                                            Map<String, dynamic> userMap = jsonDecode(userStr);
-                                            dato1=Usuario.fromJson(userMap);
-                                          }
-                                       DateTime now = new DateTime.now();
-                                      Control con = Control(
-                                           documentoAdmin:dato1.documento,
-                                           nombreAdmin:dato1.nombre1,
-                                           apellidoAdmin:dato1.apellido1,
-                                           documentoUser:model.documento,
-                                           nombreUser:model.nombre1,
-                                           apellidoUser:model.apellido1,
-                                           cargoUser:model.cargo,
-                                           dependenciaUser:model.dependencia,
-                                           hora:"${now}",
-                                      );
-                                       await carnetservice.loadControlAdmin(con);
-                                       print('jfjfjfjfjjfjfjfjrururururururur');
-                                      Navigator.pop(context);
-                                    },
-                                    label: const Text('Aceptar ', style: TextStyle(fontSize: 15))
-                                ),
-                              ],
-                            ),
+                                        if (userStr != null) {
+                                          print('entro');
+                                          Map<String, dynamic> userMap = jsonDecode(userStr);
+                                          dato1=Usuario.fromJson(userMap);
+                                        }
+                                     DateTime now = new DateTime.now();
+                                    Control con = Control(
+                                         documentoAdmin:dato1.documento,
+                                         nombreAdmin:dato1.nombre1,
+                                         apellidoAdmin:dato1.apellido1,
+                                         documentoUser:model.documento,
+                                         nombreUser:model.nombre1,
+                                         apellidoUser:model.apellido1,
+                                         cargoUser:model.cargo,
+                                         dependenciaUser:model.dependencia,
+                                         hora:"${now}",
+                                    );
+                                     await carnetservice.loadControlAdmin(con);
+                                     print('jfjfjfjfjjfjfjfjrururururururur');
+                                    Navigator.pop(context);
+                                  },
+                                  label: const Text('Aceptar ', style: TextStyle(fontSize: 15))
+                              ),
+                            ],
                           )
                         ]);
                   });
+
   }
   
 
   @override
   Widget build(BuildContext context) {
-
    final EncryptionService encryptionService= new EncryptionService();
-
    final CheckInternetConnection conexion = new CheckInternetConnection();
    final con = conexion.internetStatus();
    final loginForm= Provider.of<InputsDocumentForms>(context);
@@ -168,7 +134,6 @@ class ControlScreen extends StatelessWidget {
    final authService= Provider.of<AuthService>(context , listen: false);
    final double tam = MediaQuery.of(context).size.height * 0.17;
   //  carnetservice.datosbase();
-   
     // Usuario dato = Usuario(
     //     id: "629410aaf538dbfd9229e9b6",
     //     nombre1: "Qluis F",
@@ -260,7 +225,9 @@ class ControlScreen extends StatelessWidget {
                     displayDialono(context);
                     }else{
                     loginForm.isLoading= false;
-                    displayDialog(context,scans);
+                    // displayDialog(context,scans);
+                    Navigator.pushNamed(context, 'acceso');
+                    // Navigator.pushReplacementNamed(context, 'home');
                     }
                  },           
                     label: const Text('Consultar ', style: TextStyle(fontSize: 20))
