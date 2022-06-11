@@ -1,5 +1,6 @@
-export 'package:gob_cordoba/models/carnet_model.dart';
-export 'package:gob_cordoba/models/scan_model.dart';
-// export 'package:gob_cordoba/models/usuario.dart';
 
+export 'package:gob_cordoba/models/user.dart';
+export 'package:gob_cordoba/models/control.dart';
+export 'package:gob_cordoba/models/getUsuario.dart';
+export 'package:gob_cordoba/models/loginResponse.dart';
 

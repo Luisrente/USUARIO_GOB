@@ -1,26 +1,23 @@
 import 'dart:io';
-
-import 'package:gob_cordoba/models/control.dart';
-import 'package:gob_cordoba/models/user.dart';
+import 'package:gob_cordoba/models/models.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
-// import 'package:qrreader/models/scan_model.dart';
-// export 'package:qrreader/models/scan_model.dart';
+
 
 class DBProvider {
   static Database? _database;
   static final DBProvider db = DBProvider._();
-
+  
   DBProvider._();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    print('entro aqi');
     _database = await initDB();
     return _database!;
   }
+
   
   Future<Database> initDB() async {
     //Path de donde almaceneremos la base de datos
@@ -28,7 +25,8 @@ class DBProvider {
     final path = join(documentsDirectory.path, 'ercansDB.db');
     // Crear base de datos
     return await openDatabase(path, version: 1, onOpen: (db) {},
-        onCreate: (Database db, int version) async {
+    onCreate: (Database db, int version) async {
+
       await db.execute('''
             CREATE TABLE usuario(
               _id TEXT,
@@ -63,32 +61,12 @@ class DBProvider {
     });
   }
 
-//   nuevoScanRaw(ScanModel nuevoScan) async {
-//     final id = 1;
-//      nuevoScan.id;
-//     final tipo = nuevoScan.tipo;
-//     final valor = nuevoScan.valor;
-
-//     // Verificar la base de datos
-//     final db = await database;
-
-//     final res = await db.rawInsert('''
-//     INSERT INTO Scans(id,tipo,valor) VALUES (${id},${tipo},${valor})
-
-// ''');
-//     return res;
-//   }
-
   Future<int> nuevoScan(Usuario nuevoScan) async {
     final db = await database;
     try {
-          print('--------------PASO POR EL ERROR ---------------');
     final res = await db.insert('usuario', nuevoScan.toJson());
-          print('------------QQQQQQQQQQQQQQQQQQQ----------------');
-          print(res);
           return res;
     } catch (e) {
-      print('ENTRO AL ERRORORNG --------');
       print(e);
     }
     return 1;
@@ -99,13 +77,10 @@ class DBProvider {
     final db = await database;
     print(nuevoScan);
     try {
-          print('--------------PASO POR EL ERROR ---------------');
     final res = await db.insert('control', nuevoScan.toJson());
-          print('------------QQQQQQQQQQQQQQQQQQQ----------------');
           print(res);
           return res;
     } catch (e) {
-      print('ENTRO AL ERRORORNG --------');
       print(e);
     }
     return 1;
@@ -137,24 +112,6 @@ class DBProvider {
     }
     return dato;
   }
-
-  // Future <ScanModel> getScanById(int id) async {
-  //   final db = await database;
-  //   final List<Map<String, dynamic >> res = await db.query('Scans', where: 'id= ?', whereArgs: [id]);
-  //   ScanModel dato= new ScanModel();
-  //   if(res.isNotEmpty){
-  //   ScanModel dato= new ScanModel();
-  //   dato=ScanModel.fromJson(res.first);
-  //   print(dato.valor);
-  //   return  dato;
-  //   }else{
-  //   return dato;
-  //   }
-    // ScanModel dato= new ScanModel();
-    // dato=ScanModel.fromJson(res.first);
-    // print(dato.valor);
-    // return  dato;
-
 
  Future<List<Usuario>> getTodosLosScans() async {
     final db = await database;

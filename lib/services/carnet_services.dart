@@ -2,32 +2,28 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gob_cordoba/models/control.dart';
-import 'package:gob_cordoba/models/model/getUsuario.dart';
-import 'package:gob_cordoba/models/model/loginResponse.dart';
-// import 'package:gob_cordoba/models/models.dart';
-import 'package:gob_cordoba/models/user.dart';
-import 'package:gob_cordoba/provider/db_provider.dart';
-import 'package:gob_cordoba/provider/scan_list_provider.dart';
-import 'package:gob_cordoba/services/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:gob_cordoba/provider/provider.dart';
+import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/services/services.dart';
 
 
 
 class CarnetService extends ChangeNotifier{
 
-  final String _baseUrl = 'flutter-73f8f-default-rtdb.firebaseio.com';
   final storage = new FlutterSecureStorage();
   List<Usuario> usuarios = [];
   late Usuario usuario;
   late Usuario usualiorSelect;
   Usuario selectedProduct= Usuario();
 
-   ScanListProvider base= new ScanListProvider();
 
   File? newPictureFile;
+
+
   bool isLoading = false;
   bool isSaving = false;
 
@@ -38,10 +34,9 @@ class CarnetService extends ChangeNotifier{
  Future<String>readData()async{
   return  await storage.read(key:'data') ?? '';
   }
-  // TODO: 
 
 
-   Future <Usuario> loadCartUser() async {
+ Future <Usuario> loadCartUser() async {
 
   Usuario dato1 = Usuario();
   print('loadCartUser');
@@ -135,11 +130,11 @@ class CarnetService extends ChangeNotifier{
     return dato1;
   }
 
+
     cargaControl() async {
       List<Control> control = [];
-       control= await DBProvider.db.getTodosLosControl();
-
-       if(control.length!=0){
+      control= await DBProvider.db.getTodosLosControl();
+      if(control.length!=0){
          for (var i = 0; i < control.length; i++) {
          try {
             final uri = Uri.parse('https://apigob.herokuapp.com/api/control');
@@ -154,8 +149,6 @@ class CarnetService extends ChangeNotifier{
          }
          }
          await DBProvider.db.dtrucneAllScan();
-       }else{
-
        }
       
     }

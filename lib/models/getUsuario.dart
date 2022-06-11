@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-import '../user.dart';
+import 'package:gob_cordoba/models/models.dart';
 
 GetsUsuario getsUsuarioFromJson(String str) => GetsUsuario.fromJson(json.decode(str));
 

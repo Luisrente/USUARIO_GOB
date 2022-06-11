@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gob_cordoba/provider/product_forma_provicer.dart';
-import 'package:gob_cordoba/services/services.dart';
-import 'package:gob_cordoba/ui/screen/screens.dart';
-import 'package:gob_cordoba/ui/widgets/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/user.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+
+
+import 'package:gob_cordoba/ui/widgets/widgets.dart';
+import 'package:gob_cordoba/ui/screen/screens.dart';
+import 'package:gob_cordoba/provider/provider.dart';
+import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/services/services.dart';
 
 class HomeScreen extends StatelessWidget {
    
   const HomeScreen({Key? key}) : super(key: key);
+
 
     void displayDialog (BuildContext context , String model){
     final carnetservice= Provider.of<CarnetService>(context,listen:false);
@@ -22,7 +27,7 @@ class HomeScreen extends StatelessWidget {
                   builder: (context) {
                     return AlertDialog(
                         elevation: 5,
-                         title:  Center(
+                         title: const  Center(
                           child:  Text( 'Verificar',
                               style: TextStyle(color: Colors.black)),
                         ),
@@ -75,15 +80,21 @@ class HomeScreen extends StatelessWidget {
                   });
   }
   
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
 
   final tam = MediaQuery.of(context).size.height * 0.09;
   final carnetservice= Provider.of<CarnetService>(context);
   final dato= carnetservice.loadCartUser();
-  // print(dato.nombre1);
+
   final authService= Provider.of<AuthService>(context , listen: false);
-  final storage = new FlutterSecureStorage();
+  
   final  t= authService.readToken();
   
   if(carnetservice.isLoading) return const LoadingScreen();
@@ -154,72 +165,5 @@ class HomeScreen extends StatelessWidget {
       ),
       // bottomNavigationBar: const CustomNavigatonBar (),
     );
-  }
-
-  void ConfirmarImgen(BuildContext context, PickedFile pickedFile) => displayDialog(context, pickedFile.path);
-}
-
-class ShowImg extends StatelessWidget {
-
-  final String model;
-  const ShowImg({
-    Key? key,  required  this.model,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-
-    final carnetservice= Provider.of<CarnetService>(context);
-    return  AlertDialog(
-                        elevation: 5,
-                         title:  Center(
-                          child:  Text( 'Verificar',
-                              style: TextStyle(color: Colors.black)),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadiusDirectional.circular(10)),
-                        content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children:[
-                              ProductImage(url: model)
-                            ]
-                            ),
-                        actions: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ElevatedButton.icon(
-                                    icon: const  Icon(Icons.close),
-                                    style: ElevatedButton. styleFrom(
-                                    primary: Colors.red),
-                                    onPressed: () {
-                                     // widget.check!.terms = true;
-                                      Navigator.pop(context);
-                                    },
-                                    label: const Text('Cancelar', style: TextStyle(fontSize: 15))
-                                ),
-                                SizedBox(width: 10),
-                                ElevatedButton.icon(
-                                    icon: const Icon(Icons.check),
-                                    style: ElevatedButton. styleFrom(
-                                    primary: Colors.green),
-                                    onPressed: () {
-                                     // widget.check!.terms = true;
-                                     if ((carnetservice.uploadImage(model))== null){
-                                        NotificationsService.showSnackbar('No se guardo');
-                                     }
-                                     print('entro aqui');
-                                     Navigator.pop(context);
-                                    },
-                                    label: const Text('Aceptar ', style: TextStyle(fontSize: 15))
-                                ),
-                              ],
-                            ),
-                          )
-                        ]
-                        );
-
   }
 }

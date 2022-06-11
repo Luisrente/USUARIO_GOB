@@ -1,22 +1,25 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gob_cordoba/models/model/getUsuario.dart';
-import 'package:gob_cordoba/models/model/loginResponse.dart';
-import 'package:gob_cordoba/models/user.dart';
-import 'package:gob_cordoba/provider/db_provider.dart';
-import 'package:gob_cordoba/services/notications_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'package:gob_cordoba/provider/provider.dart';
+import 'package:gob_cordoba/models/models.dart';
+import 'package:gob_cordoba/services/services.dart';
+
 
 class AuthService extends ChangeNotifier{
 
-  final String _baseUrl= 'identitytoolkit.googleapis.com';
-  final String _firebaseToken= 'AIzaSyAo_Tm_FOjY5D14kfDWtpF7UgNqS0xE3yU';
+
   final storage = new FlutterSecureStorage();
-List<Usuario> usuarios = [];
+  List<Usuario> usuarios = [];
   late Usuario usuario;
+
+
 
   Future<String> login1( String email, String password ) async {
     final data = {
@@ -31,6 +34,7 @@ List<Usuario> usuarios = [];
         'Content-Type': 'application/json'
       }
     );
+
     print('Entro metodo 1');
       if ( resp.statusCode == 200 ) {
       final loginResponse = loginResponseFromJson( resp.body );
@@ -42,6 +46,7 @@ List<Usuario> usuarios = [];
       await storage.write(key:'token',value:usuario.rol);  
       await storage.write(key:'id',value:usuario.id); 
       print('luis');
+      
       if (usuario.verfi=="false" && usuario.rol=='ADMIN_ROLE'){
         await datosbase( );
         return '4';
@@ -67,6 +72,7 @@ List<Usuario> usuarios = [];
     }
     return '';
   }
+
 
    Future<String> password( String password,String id ) async {
     final data = {
@@ -96,10 +102,13 @@ List<Usuario> usuarios = [];
     return '';
   }
 
+
+
   Future<String> colorTheme( String id ) async {
     final data = {
       'color': id
     };
+
 
     try {
     final uri = Uri.parse('https://apigob.herokuapp.com/api/color');
@@ -124,6 +133,7 @@ List<Usuario> usuarios = [];
     }
     return '';
   }
+
 
   datosbase( ) async {  
     // isLoading = true;

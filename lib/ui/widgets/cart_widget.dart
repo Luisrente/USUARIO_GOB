@@ -6,7 +6,6 @@ import 'package:gob_cordoba/ui/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../data/AES.dart';
 import '../../models/user.dart';
 
 class CardWidget extends StatelessWidget {

@@ -3,10 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:gob_cordoba/data/encryption_service.dart';
-import 'package:gob_cordoba/models/carnet_model.dart';
-import 'package:gob_cordoba/models/control.dart';
 import 'package:gob_cordoba/models/models.dart';
-import 'package:gob_cordoba/models/user.dart';
 import 'package:gob_cordoba/provider/db_provider.dart';
 import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/check_internet.dart';
@@ -125,35 +122,18 @@ class ControlScreen extends StatelessWidget {
                   });
   }
   
+
   @override
   Widget build(BuildContext context) {
    final EncryptionService encryptionService= new EncryptionService();
    final CheckInternetConnection conexion = new CheckInternetConnection();
    final con = conexion.internetStatus();
    final loginForm= Provider.of<InputsDocumentForms>(context);
-   print(con);
    final carnetservice= Provider.of<CarnetService>(context);
    final authService= Provider.of<AuthService>(context , listen: false);
    final double tam = MediaQuery.of(context).size.height * 0.17;
-  //  carnetservice.datosbase();
-    // Usuario dato = Usuario(
-    //     id: "629410aaf538dbfd9229e9b6",
-    //     nombre1: "Qluis F",
-    //     nombre2: "",
-    //     apellido1: "Renteria",
-    //     apellido2: "Martineez",
-    //     cargo: "Secretario",
-    //     documento: "234512337",
-    //     dependencia: "Sec.Ambiente",
-    //     correo: "Luis4@gmail.com",
-    //     img: "",
-    //     rol: "USER_ROLE",
-    //     estado: "false",
-    //     verfi: "true"
-    // );
-  //  print( DBProvider.db.getScanById('629410aaf538dbfd9229e9b6'));
-  //  DBProvider.db.getTodosLosScans();
-  //  DBProvider.db.nuevoScan(dato);
+ 
+
     return  Scaffold(
       appBar: AppBar(
          actions:[
@@ -251,7 +231,9 @@ class ControlScreen extends StatelessWidget {
         child:  const Icon(Icons.qr_code_2_outlined),
         onPressed: () async {
           String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-            '#3D8BEF', 'Cancelar', false, ScanMode.QR);       
+            '#3D8BEF', 'Cancelar', false, ScanMode.QR);      
+
+
         try {
            if(barcodeScanRes == '-1'){
              //no hace nada y sale
@@ -264,8 +246,13 @@ class ControlScreen extends StatelessWidget {
                  if(scans.documento ==null){
                    displayDialono(context);
                    }else{
-                   displayDialog(context,scans);
-                    }
+                  
+                  Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: ( _ , __ , ___) => const AccesoScreen(),
+                  transitionDuration: const Duration( seconds: 0)
+                ));
+
+                }
              }
            }
         } catch (e) {
