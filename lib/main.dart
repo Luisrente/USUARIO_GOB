@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gob_cordoba/provider/input_document_form_provider.dart.dart';
 import 'package:gob_cordoba/services/services.dart';
+import 'package:gob_cordoba/shared_prefe/preferencias_user.dart';
 import 'package:gob_cordoba/ui/screen/screens.dart';
 import 'package:gob_cordoba/ui/widgets/style_widget.dart';
 import 'package:provider/provider.dart';
-void main() => runApp( const AppState());
+// void main() => runApp( const AppState());
+Future main() async {
+// await PreferenciasUser.init();
+runApp( const AppState());
+}
+
+
+
 class AppState extends StatelessWidget {
   const  AppState({ Key? key }) : super(key: key);
   @override
@@ -14,6 +22,7 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider( create: ( _ ) => CarnetService()),
         ChangeNotifierProvider( create: ( _ ) => AuthService()),
         ChangeNotifierProvider( create: ( _ ) => InputsDocumentForms()),
+        ChangeNotifierProvider( create: ( _ ) => UserPrefe()),
 
       ],
        child:  MyApp(),

@@ -232,8 +232,6 @@ class ControlScreen extends StatelessWidget {
         onPressed: () async {
           String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
             '#3D8BEF', 'Cancelar', false, ScanMode.QR);      
-
-
         try {
            if(barcodeScanRes == '-1'){
              //no hace nada y sale

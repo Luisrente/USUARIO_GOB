@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+
+
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 
+import 'package:gob_cordoba/shared_prefe/preferencias_user.dart';
 import 'package:gob_cordoba/provider/provider.dart';
 import 'package:gob_cordoba/models/models.dart';
 import 'package:gob_cordoba/services/services.dart';
@@ -14,11 +18,12 @@ import 'package:gob_cordoba/services/services.dart';
 
 class CarnetService extends ChangeNotifier{
 
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   List<Usuario> usuarios = [];
   late Usuario usuario;
   late Usuario usualiorSelect;
   Usuario selectedProduct= Usuario();
+  final prefe= UserPrefe();
 
 
   File? newPictureFile;
@@ -38,7 +43,9 @@ class CarnetService extends ChangeNotifier{
 
  Future <Usuario> loadCartUser() async {
 
+
   Usuario dato1 = Usuario();
+  Usuario dato3 = Usuario();
   print('loadCartUser');
    SharedPreferences prefs = await SharedPreferences.getInstance();
    String? kitJson = prefs.getString("content");
@@ -63,6 +70,9 @@ class CarnetService extends ChangeNotifier{
       final loginResponse = loginResponseFromJson( resp.body );
       usuario = loginResponse.usuario;
       // selectedProduct.img=usuario.img;
+      
+      prefe.userset=usuario;
+
       return usuario;
     } else {
       dato1=usuario;
@@ -70,7 +80,9 @@ class CarnetService extends ChangeNotifier{
       return usuario;
     }
     } catch (e) {
+      print('kemkkmeemkmekmke');
       print(e);
+      print('ejjejejejjej');
       NotificationsService.showSnackbar("Comunicarse con el admin loadcard ");
       return dato1;
   }

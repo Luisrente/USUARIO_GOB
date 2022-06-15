@@ -1,34 +1,80 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PreferenciasUser {
-  static late SharedPreferences _prefs;
-  static const String prefClave = 'token_user'; //clave
-  static const String prefClave2 = 'id_user'; //clave
-  static String tokenVar = '';
-  static String idVar = '';
+import 'package:gob_cordoba/models/models.dart';
 
-  static Future init() async {
+class UserPrefe extends ChangeNotifier {
+   SharedPreferences? _prefs;
+   String prefClave = 'usuario'; //clave
+   String tokenVar = '';
+   String idVar = '';
+  // late Usuario dato1 = Usuario();
+
+
+  Future init() async {
     _prefs = await SharedPreferences.getInstance();
+    return this;
   }
 
-  static String get token {
-    return _prefs.getString(prefClave) ?? tokenVar;
+   Future<Usuario> userget() async{
+   init();
+   Usuario dato1 = Usuario();
+    print('fjfjjfjfjfjf njd ');
+  try {
+       String? userStr =   _prefs?.getString(prefClave);
+      print('22222222222222fjf njd ');
+       print(userStr);
+      print('22222222222222fjf njd ');
+
+       print('qeqwweeototototoototototototoww njd ');
+
+       Map<String, dynamic> userMap = jsonDecode(userStr!);
+       dato1=Usuario.fromJson(userMap);
+       print('nojdasdd');
+       print(dato1.apellido2);
+       print('ffkfkfkkfkfk');
+  } catch (e) {
+    print('j---j--');
+    print('j---u--');
+    print('j---o--');
+    print(e);
+    print('j-----');
+  }
+  //  print('fjfjjfjfjfjf paosododo ');
+
+  //  Map<String, dynamic> userMap = jsonDecode(userStr!);
+  //  dato1=Usuario.fromJson(userMap);
+   return dato1;
   }
 
-  static set token(String value) {
-    tokenVar = value;
-    _prefs.setString(prefClave, value);
+   set userset(Usuario value) {
+     init();
+     print('value.apellido2');
+     print(value.apellido2);
+     print('value.apellido2');
+    //  _prefs?.setString(prefClave, jsonEncode(value.toJson()));
+     String? userStr =   _prefs?.getString(prefClave);
+       print('Malpa');
+       print('ri');
+       print(userStr);
+       print('userStr');
   }
 
-  static String get id {
-    return _prefs.getString(prefClave2) ?? idVar;
-  }
 
-  static set id(String value) {
-    idVar = value;
-    _prefs.setString(prefClave2, value);
-  }
 }
+
+  // static String get id {
+  //   return _prefs.getString(prefClave2) ?? idVar;
+  // }
+
+//   static set id(String value) {
+//     idVar = value;
+//     _prefs.setString(prefClave2, value);
+//   }
+// }
 
 
 

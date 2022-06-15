@@ -39,10 +39,14 @@ class AuthService extends ChangeNotifier{
       if ( resp.statusCode == 200 ) {
       final loginResponse = loginResponseFromJson( resp.body );
       usuario = loginResponse.usuario;
+
        SharedPreferences prefs = await SharedPreferences.getInstance();
+
        prefs.setString('content', jsonEncode(usuario.toJson()));
        String? w = await prefs.getString('content');
        print(w);
+
+
       await storage.write(key:'token',value:usuario.rol);  
       await storage.write(key:'id',value:usuario.id); 
       print('luis');
@@ -101,8 +105,6 @@ class AuthService extends ChangeNotifier{
     }
     return '';
   }
-
-
 
   Future<String> colorTheme( String id ) async {
     final data = {
